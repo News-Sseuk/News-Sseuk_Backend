@@ -1,0 +1,24 @@
+spring:
+  application:
+    name: News-Sseuk
+  datasource:
+    url: jdbc:mysql://localhost:3306/news-sseuk
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        #        show_sql: true
+        format_sql: true
+        default_batch_fetch_size: 1000 #??? ??
+
+logging.level:
+  org.hibernate.SQL: debug
+#  org.hibernate.type: trace
+
+server:
+  port: 8080
