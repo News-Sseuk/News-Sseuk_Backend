@@ -6,7 +6,10 @@ spring:
     username: root
     password: root
     driver-class-name: com.mysql.cj.jdbc.Driver
-
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
   jpa:
     hibernate:
       ddl-auto: create
@@ -15,6 +18,9 @@ spring:
         #        show_sql: true
         format_sql: true
         default_batch_fetch_size: 1000 #??? ??
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+
 
 logging.level:
   org.hibernate.SQL: debug
