@@ -1,9 +1,11 @@
 package backend.newssseuk.domain.article;
 
+import backend.newssseuk.domain.RecommendedArticle.RecommendedArticle;
 import backend.newssseuk.domain.articleHashTag.ArticleHashTag;
 import backend.newssseuk.domain.common.BaseEntity;
 import backend.newssseuk.domain.enums.Category;
 import backend.newssseuk.domain.enums.Trending;
+import backend.newssseuk.domain.userHistory.UserHistory;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -44,4 +46,12 @@ public class Article extends BaseEntity {
     private Category category;
 
     private Trending trending;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "recommended_article")
+    private RecommendedArticle recommendedArticle;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_history")
+    private UserHistory userHistory;
 }

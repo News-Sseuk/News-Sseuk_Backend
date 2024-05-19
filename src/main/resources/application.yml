@@ -2,7 +2,7 @@ spring:
   application:
     name: News-Sseuk
   datasource:
-    url: jdbc:mysql://localhost:3306/news-sseuk
+    url: jdbc:mysql://localhost:3306/news-sseuk?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
     username: root
     password: root
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -11,15 +11,17 @@ spring:
       host: localhost
       port: 27017
   jpa:
+    open-in-view: false
+    show-sql: true
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     properties:
       hibernate:
         #        show_sql: true
         format_sql: true
-        default_batch_fetch_size: 1000 #??? ??
-  autoconfigure:
-    exclude: org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+        default_batch_fetch_size: 1000
+  jwt:
+    secret: vmfhaltmskdlstkfkdgodyroqkfwkdbalroqkfwkdbalaaaaaaaaaaaaaaaabbbbb
 
 
 logging.level:
@@ -27,4 +29,4 @@ logging.level:
 #  org.hibernate.type: trace
 
 server:
-  port: 8080
+  port: 8082
