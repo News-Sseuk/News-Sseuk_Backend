@@ -6,6 +6,9 @@ import backend.newssseuk.domain.enums.NotificationSetting;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Getter
 @Builder
@@ -18,13 +21,21 @@ public class User extends BaseEntity {
 
     private String email;
 
+    private String name;
+
     private String password;
 
+    // todo string
     private Category interestedCategory;
 
-    private Integer attendence;
+    private Integer attendance;
 
-    private String attendenceDate;
+    private String attendanceDate;
 
+    // todo string
     private NotificationSetting notificationSetting;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @Builder.Default
+    private List<String> roles = new ArrayList<>();
 }
