@@ -13,7 +13,6 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
-
 @Service
 @RequiredArgsConstructor
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
@@ -38,33 +37,24 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         }
 
         String username = oAuth2Response.getProvider() + " " + oAuth2Response.getProviderId();
-        User existData = userRepository.findByEmail(username);
+        String email = oAuth2Response.getEmail();
+        User existData = userRepository.findByEmail(email);
 
         if (existData == null) {
 
             User userEntity = User.builder()
-                    .email(username)
+                    .email(oAuth2Response.getEmail())
                     .name(oAuth2Response.getName())
                     .role("ROLE_USER")
                     .build();
 
             userRepository.save(userEntity);
-
-            UserDto userDTO = UserDto.builder()
-                    .name(oAuth2Response.getName())
-                    .username(username)
-                    .role("ROLE_USER")
-                    .build();
-            return new CustomOAuth2User(userDTO);
-        } else {
-
-            UserDto userDTO = UserDto.builder()
-                    .username(existData.getEmail())
-                    .name(oAuth2Response.getName())
-                    .role(existData.getRole())
-                    .build();
-
-            return new CustomOAuth2User(userDTO);
         }
+        UserDto userDTO = UserDto.builder()
+                .name(oAuth2Response.getName())
+                .username(username)
+                .role("ROLE_USER")
+                .build();
+        return new CustomOAuth2User(userDTO);
     }
 }
