@@ -17,8 +17,10 @@ public class RefreshToken {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    //자체 로그인은 email이 들어감
+    // 추후 삭제
     private String username;
+
+    private String accessToken;
 
     private String refresh;
 
