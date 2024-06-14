@@ -6,6 +6,8 @@ import backend.newssseuk.domain.user.jwt.JWTUtil;
 import backend.newssseuk.domain.user.repository.UserRepository;
 import backend.newssseuk.domain.user.web.request.SignInDto;
 import backend.newssseuk.domain.user.web.request.SignUpDto;
+import backend.newssseuk.payload.exception.GeneralException;
+import backend.newssseuk.payload.status.ErrorStatus;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -29,6 +31,7 @@ public class UserService {
         return userRepository.findByName(username);
     }*/
 
+
     public void createAccount(SignUpDto signUpDto) {
         String name = signUpDto.getName();
         String email = signUpDto.getEmail();
@@ -37,16 +40,16 @@ public class UserService {
         Boolean isExist = userRepository.existsByEmail(email);
 
         if (isExist) {
-            return;
+            throw new GeneralException(ErrorStatus.MEMBER_ALREADY_EXIST, "이미 가입된 회원입니다.");
         }
-        User data = User.builder()
+        User newUser = User.builder()
                 .name(name)
                 .email(email)
                 .password(passwordEncoder.encode(password))
                 .role("ROLE_USER")
                 .build();
 
-        userRepository.save(data);
+        userRepository.save(newUser);
     }
 
     public String signIn(SignInDto signInDto, HttpServletResponse response) {
