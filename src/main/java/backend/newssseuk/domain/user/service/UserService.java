@@ -60,4 +60,8 @@ public class UserService {
         refreshTokenService.createTokens(authenticationToken.getName(), response);
         return response.getHeader("access");
     }
+
+    public void signOut(String accessToken) {
+        refreshTokenService.deleteRefresh(accessToken);
+    }
 }

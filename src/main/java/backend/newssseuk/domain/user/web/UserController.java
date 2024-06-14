@@ -5,6 +5,7 @@ import backend.newssseuk.domain.user.jwt.JWTUtil;
 import backend.newssseuk.domain.user.service.UserService;
 import backend.newssseuk.domain.user.web.request.SignInDto;
 import backend.newssseuk.domain.user.web.request.SignUpDto;
+import backend.newssseuk.payload.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -57,5 +58,12 @@ public class UserController {
 
         refreshTokenService.createTokens(username,response);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping("/signout")
+    @Operation(description = "로그아웃")
+    public ApiResponse<Void> signOut(@RequestBody String accessToken) {
+        userService.signOut(accessToken);
+        return ApiResponse.onSuccess();
     }
 }
