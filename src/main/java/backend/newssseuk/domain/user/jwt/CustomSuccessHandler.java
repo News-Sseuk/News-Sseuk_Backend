@@ -24,7 +24,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         CustomOAuth2User customUserDetails = (CustomOAuth2User) authentication.getPrincipal();
         String username = customUserDetails.getUsername();
 
-        refreshTokenService.createTokens(username,response);
+        refreshTokenService.createTokens(username);
         response.sendRedirect("http://localhost:3000/");
     }
 }

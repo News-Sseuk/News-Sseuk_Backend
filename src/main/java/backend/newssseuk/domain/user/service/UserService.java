@@ -3,9 +3,11 @@ package backend.newssseuk.domain.user.service;
 import backend.newssseuk.domain.refreshToken.service.RefreshTokenService;
 import backend.newssseuk.domain.user.User;
 import backend.newssseuk.domain.user.jwt.JWTUtil;
+import backend.newssseuk.domain.user.jwt.JwtToken;
 import backend.newssseuk.domain.user.repository.UserRepository;
 import backend.newssseuk.domain.user.web.request.SignInDto;
 import backend.newssseuk.domain.user.web.request.SignUpDto;
+import backend.newssseuk.domain.user.web.response.SignInResponseDto;
 import backend.newssseuk.payload.exception.GeneralException;
 import backend.newssseuk.payload.status.ErrorStatus;
 import jakarta.servlet.http.HttpServletResponse;
@@ -52,16 +54,37 @@ public class UserService {
         userRepository.save(newUser);
     }
 
-    public String signIn(SignInDto signInDto, HttpServletResponse response) {
+    /*
+    public SignInResponse signIn(LoginMemberRequest request) {
+    // DB에서 회원정보를 가져온 후 -> CustomUserDetail로 변환한 객체를 받는다.
+    String username = request.getUsername();
+    String password = request.getPassword();
+    Boolean keepStatus = request.getKeepStatus();
+
+    UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, password);
+    // 비밀번호 검증
+    Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+
+    JwtToken jwtToken = jwtTokenProvider.generateToken(authentication, username, keepStatus);
+    refreshTokenService.saveRefreshToken(jwtToken.getAccessToken(), jwtToken.getRefreshToken());
+    return SignInResponse.builder()
+      .token(jwtToken)
+      .build();
+  }
+     */
+    public SignInResponseDto signIn(SignInDto signInDto) {
         String email = signInDto.getEmail();
         String password = signInDto.getPassword();
 
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(email, password);
         authenticationManagerBuilder.getObject().authenticate(authenticationToken);
 
-        //여기서 access, refresh 다뤄야함
-        refreshTokenService.createTokens(authenticationToken.getName(), response);
-        return response.getHeader("access");
+        JwtToken jwtToken = refreshTokenService.createTokens(authenticationToken.getName());
+        refreshTokenService.saveRefreshToken(authenticationToken.getName(), jwtToken.getAccessToken(), jwtToken.getRefreshToken());
+
+        return SignInResponseDto.builder()
+                .token(jwtToken)
+                .build();
     }
 
     public void signOut(String accessToken) {

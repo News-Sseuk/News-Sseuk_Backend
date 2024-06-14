@@ -5,6 +5,7 @@ import backend.newssseuk.domain.user.jwt.JWTUtil;
 import backend.newssseuk.domain.user.service.UserService;
 import backend.newssseuk.domain.user.web.request.SignInDto;
 import backend.newssseuk.domain.user.web.request.SignUpDto;
+import backend.newssseuk.domain.user.web.response.SignInResponseDto;
 import backend.newssseuk.payload.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.Cookie;
@@ -33,8 +34,8 @@ public class UserController {
 
     @PostMapping("/signin")
     @Operation(summary = "로그인")
-    public String signIn(@RequestBody SignInDto signInDto, HttpServletResponse response) {
-        return userService.signIn(signInDto, response);
+    public ApiResponse<SignInResponseDto> signIn(@RequestBody SignInDto signInDto) {
+        return ApiResponse.onSuccess(userService.signIn(signInDto));
     }
 
     @PostMapping("/refresh")
@@ -56,7 +57,7 @@ public class UserController {
         String username = jwtUtil.getUsername(refresh);
         refreshTokenService.deleteRefresh(refresh);
 
-        refreshTokenService.createTokens(username,response);
+        refreshTokenService.createTokens(username);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

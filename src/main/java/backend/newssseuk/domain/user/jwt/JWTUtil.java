@@ -2,7 +2,6 @@ package backend.newssseuk.domain.user.jwt;
 
 import io.jsonwebtoken.Jwts;
 import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -43,26 +42,25 @@ public class JWTUtil {
     }
 
 
-    public String createJwt(String category, String username) {
-
-        return Jwts.builder()
-                .claim("category", category)
+    public JwtToken createJwt(String username) {
+        String accessToken = Jwts.builder()
+                .claim("category", "access")
                 .claim("username", username)
                 .claim("role", "ROLE_USER")
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + 3600000))
                 .signWith(secretKey)
                 .compact();
-    }
 
-    public Cookie createCookie(String key, String value) {
+        String refreshToken = Jwts.builder()
+                .setExpiration(new Date(System.currentTimeMillis() + 360000000))
+                .signWith(secretKey)
+                .compact();
 
-        Cookie cookie = new Cookie(key, value);
-        cookie.setMaxAge(24*60*60);
-        //cookie.setSecure(true);
-        //cookie.setPath("/");
-        cookie.setHttpOnly(true);
-
-        return cookie;
+        return JwtToken.builder()
+                .grantType("Bearer")
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .build();
     }
 }
