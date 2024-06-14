@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,9 +27,9 @@ public class UserController {
 
     @PostMapping("/signup")
     @Operation(summary = "회원가입")
-    public String joinProcess(@RequestBody SignUpDto signUpDto) {
+    public ApiResponse<Void> joinProcess(@RequestBody SignUpDto signUpDto) {
         userService.createAccount(signUpDto);
-        return "ok";          //나중에 exception 처리 후 수정
+        return ApiResponse.onCreate();
     }
 
     @PostMapping("/signin")

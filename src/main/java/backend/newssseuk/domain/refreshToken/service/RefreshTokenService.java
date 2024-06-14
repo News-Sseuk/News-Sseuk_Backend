@@ -61,7 +61,7 @@ public class RefreshTokenService {
         }
         String newAccess = jwtUtil.createJwt("access", username);
         String newRefresh = jwtUtil.createJwt("refresh", username);
-        saveRefreshToken(username, newRefresh, 86400000L);
+        saveRefreshToken(newAccess, newRefresh, 86400000L);
         response.setHeader("access", newAccess);
         response.addCookie(jwtUtil.createCookie("refresh", newRefresh));
         return response;
