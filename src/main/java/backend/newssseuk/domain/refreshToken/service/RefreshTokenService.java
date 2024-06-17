@@ -9,9 +9,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
-import java.util.Optional;
-
-import static org.hibernate.query.sqm.tree.SqmNode.log;
 
 @Service
 @RequiredArgsConstructor
@@ -35,22 +32,6 @@ public class RefreshTokenService {
     public void deleteRefresh(String access)
     {
         refreshTokenRepository.deleteByAccessToken(access);
-    }
-
-    public Boolean checkRefresh(String refresh)
-    {
-        String category = jwtUtil.getCategory(refresh);
-        Boolean isExist = refreshTokenRepository.existsByRefresh(refresh);
-        if (refresh == null || !category.equals("refresh") || !isExist) {
-            return false;
-        }
-
-        try {
-            jwtUtil.isExpired(refresh);
-        } catch (ExpiredJwtException e) {
-            return false;
-        }
-        return true;
     }
 
     public JwtToken createTokens(String username)
