@@ -51,7 +51,7 @@ public class RefreshTokenService {
         }
         return true;
     }
-    
+
     public JwtToken createTokens(String username)
     {
         if (refreshTokenRepository.findByUsername(username) != null)

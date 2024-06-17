@@ -13,6 +13,8 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
@@ -29,18 +31,16 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         String registrationId = userRequest.getClientRegistration().getRegistrationId();
         OAuth2Response oAuth2Response = null;
         if (registrationId.equals("naver")) {
-
             oAuth2Response = new NaverResponse(oAuth2User.getAttributes());
         } else {
-
             return null;
         }
 
         String username = oAuth2Response.getProvider() + " " + oAuth2Response.getProviderId();
         String email = oAuth2Response.getEmail();
-        User existData = userRepository.findByEmail(email);
+        Optional<User> foundUser = userRepository.findByEmail(email);
 
-        if (existData == null) {
+        if (foundUser.isEmpty()) {
 
             User userEntity = User.builder()
                     .email(oAuth2Response.getEmail())

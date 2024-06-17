@@ -1,29 +1,22 @@
 package backend.newssseuk.domain.user.web;
 
-import backend.newssseuk.domain.refreshToken.service.RefreshTokenService;
-import backend.newssseuk.domain.user.jwt.JWTUtil;
 import backend.newssseuk.domain.user.service.UserService;
 import backend.newssseuk.domain.user.web.request.SignInDto;
 import backend.newssseuk.domain.user.web.request.SignUpDto;
 import backend.newssseuk.domain.user.web.response.SignInResponseDto;
+import backend.newssseuk.domain.user.web.response.TokenResponse;
 import backend.newssseuk.payload.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@CrossOrigin
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/user")
 public class UserController {
 
     private final UserService userService;
-    private final JWTUtil jwtUtil;
-    private final RefreshTokenService refreshTokenService;
 
     @PostMapping("/signup")
     @Operation(summary = "회원가입")
@@ -39,32 +32,8 @@ public class UserController {
     }
 
     @PostMapping("/refresh")
-    public ResponseEntity<?> refresh(HttpServletRequest request, HttpServletResponse response) {
-        String refresh = null;
-        Cookie[] cookies = request.getCookies();
-        for (Cookie cookie : cookies) {
-            if (cookie.getName().equals("refresh")) {
-                refresh = cookie.getValue();
-            }
-        }
-
-        if(!refreshTokenService.checkRefresh(refresh))
-        {
-            return new ResponseEntity<>("refresh token prob", HttpStatus.BAD_REQUEST);
-        }
-
-        System.out.println("여기까진....");
-        String username = jwtUtil.getUsername(refresh);
-        refreshTokenService.deleteRefresh(refresh);
-
-        refreshTokenService.createTokens(username);
-        return new ResponseEntity<>(HttpStatus.OK);
+    public ApiResponse<TokenResponse> refresh(@RequestBody String access) {
+        return ApiResponse.onCreate(userService.getAccessToken(access));
     }
 
-    @PostMapping("/signout")
-    @Operation(description = "로그아웃")
-    public ApiResponse<Void> signOut(@RequestBody String accessToken) {
-        userService.signOut(accessToken);
-        return ApiResponse.onSuccess();
-    }
 }

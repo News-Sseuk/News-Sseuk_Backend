@@ -1,5 +1,7 @@
 package backend.newssseuk.domain.user.service;
 
+import backend.newssseuk.domain.refreshToken.RefreshToken;
+import backend.newssseuk.domain.refreshToken.repository.RefreshTokenRepository;
 import backend.newssseuk.domain.refreshToken.service.RefreshTokenService;
 import backend.newssseuk.domain.user.User;
 import backend.newssseuk.domain.user.jwt.JWTUtil;
@@ -8,15 +10,16 @@ import backend.newssseuk.domain.user.repository.UserRepository;
 import backend.newssseuk.domain.user.web.request.SignInDto;
 import backend.newssseuk.domain.user.web.request.SignUpDto;
 import backend.newssseuk.domain.user.web.response.SignInResponseDto;
+import backend.newssseuk.domain.user.web.response.TokenResponse;
 import backend.newssseuk.payload.exception.GeneralException;
 import backend.newssseuk.payload.status.ErrorStatus;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 
 @Service
 @RequiredArgsConstructor
@@ -28,6 +31,7 @@ public class UserService {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final JWTUtil jwtUtil;
     private final RefreshTokenService refreshTokenService;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     /*public User findByUsername(String username) {
         return userRepository.findByName(username);
@@ -89,5 +93,23 @@ public class UserService {
 
     public void signOut(String accessToken) {
         refreshTokenService.deleteRefresh(accessToken);
+    }
+
+    private void checkRefreshTokenExpire(String refreshToken) {
+        if (jwtUtil.isExpired(refreshToken)) {
+            throw new GeneralException(ErrorStatus.EXPIRED_REFRESH_TOKEN, "refreshToken이 만료되었습니다.");
+        }
+    }
+
+    public TokenResponse getAccessToken(String access) {
+        String username = jwtUtil.getUsername(access);
+        String email = jwtUtil.getEmail(access);
+        String roles = jwtUtil.getRole(access);
+
+        RefreshToken refreshToken = refreshTokenRepository.findByAccessToken(access);
+        checkRefreshTokenExpire(refreshToken.getRefresh());
+        return TokenResponse.builder()
+                .accessToken(jwtUtil.recreateAccessToken(username, email, roles))
+                .build();
     }
 }
