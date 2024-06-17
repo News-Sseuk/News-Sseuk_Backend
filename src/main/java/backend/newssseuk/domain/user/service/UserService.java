@@ -20,6 +20,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 
 @Service
 @RequiredArgsConstructor
@@ -32,11 +34,6 @@ public class UserService {
     private final JWTUtil jwtUtil;
     private final RefreshTokenService refreshTokenService;
     private final RefreshTokenRepository refreshTokenRepository;
-
-    /*public User findByUsername(String username) {
-        return userRepository.findByName(username);
-    }*/
-
 
     public void createAccount(SignUpDto signUpDto) {
         String name = signUpDto.getName();
@@ -58,24 +55,6 @@ public class UserService {
         userRepository.save(newUser);
     }
 
-    /*
-    public SignInResponse signIn(LoginMemberRequest request) {
-    // DB에서 회원정보를 가져온 후 -> CustomUserDetail로 변환한 객체를 받는다.
-    String username = request.getUsername();
-    String password = request.getPassword();
-    Boolean keepStatus = request.getKeepStatus();
-
-    UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, password);
-    // 비밀번호 검증
-    Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
-
-    JwtToken jwtToken = jwtTokenProvider.generateToken(authentication, username, keepStatus);
-    refreshTokenService.saveRefreshToken(jwtToken.getAccessToken(), jwtToken.getRefreshToken());
-    return SignInResponse.builder()
-      .token(jwtToken)
-      .build();
-  }
-     */
     public SignInResponseDto signIn(SignInDto signInDto) {
         String email = signInDto.getEmail();
         String password = signInDto.getPassword();
@@ -106,8 +85,11 @@ public class UserService {
         String email = jwtUtil.getEmail(access);
         String roles = jwtUtil.getRole(access);
 
-        RefreshToken refreshToken = refreshTokenRepository.findByAccessToken(access);
-        checkRefreshTokenExpire(refreshToken.getRefresh());
+        Optional<RefreshToken> refreshToken = refreshTokenRepository.findByAccessToken(access);
+        if(refreshToken.isEmpty()) {
+            throw new GeneralException(ErrorStatus.TOKEN_NOT_FOUND);
+        }
+        checkRefreshTokenExpire(refreshToken.get().getRefresh());
         return TokenResponse.builder()
                 .accessToken(jwtUtil.recreateAccessToken(username, email, roles))
                 .build();

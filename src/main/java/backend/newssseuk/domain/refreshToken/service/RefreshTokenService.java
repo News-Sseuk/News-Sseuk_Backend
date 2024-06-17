@@ -9,6 +9,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.Optional;
+
+import static org.hibernate.query.sqm.tree.SqmNode.log;
 
 @Service
 @RequiredArgsConstructor
@@ -29,11 +32,9 @@ public class RefreshTokenService {
         refreshTokenRepository.save(refreshToken);
     }
 
-    public void deleteRefresh(String refresh)
+    public void deleteRefresh(String access)
     {
-        if(refresh != null) {
-            refreshTokenRepository.deleteAllByRefresh(refresh);
-        }
+        refreshTokenRepository.deleteByAccessToken(access);
     }
 
     public Boolean checkRefresh(String refresh)

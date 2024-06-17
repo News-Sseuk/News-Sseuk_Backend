@@ -36,4 +36,10 @@ public class UserController {
         return ApiResponse.onCreate(userService.getAccessToken(access));
     }
 
+    @PostMapping("/signout")
+    @Operation(summary = "로그아웃")
+    public ApiResponse<Void> signOut(@RequestBody String access) {
+        userService.signOut(access);
+        return ApiResponse.onSuccess();
+    }
 }
