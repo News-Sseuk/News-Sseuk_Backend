@@ -8,10 +8,8 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
   data:
     mongodb:
-      host: localhost
-      url: mongodb://localhost:27017
-      database : news-seuk
-      port: 27017
+      uri: mongodb+srv://sunshineonmyneck:dlrkgus1^^@cluster0.2xoy3j8.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
+      database: crawling-articles
   jpa:
     open-in-view: false
     show-sql: true
