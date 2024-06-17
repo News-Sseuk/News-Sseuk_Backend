@@ -1,15 +1,17 @@
 package backend.newssseuk.domain.user.jwt;
 
 import io.jsonwebtoken.Jwts;
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletResponse;
+import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
+
+import static net.minidev.asm.ConvertDate.convertToDate;
 
 @Component
 public class JWTUtil {
@@ -37,32 +39,48 @@ public class JWTUtil {
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("role", String.class);
     }
 
+    public String getEmail(String token) {
+        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("email", String.class);
+    }
+
     public Boolean isExpired(String token) {
 
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().getExpiration().before(new Date());
     }
 
-
-    public String createJwt(String category, String username) {
-
-        return Jwts.builder()
-                .claim("category", category)
+    public JwtToken createJwt(String username) {
+        String accessToken = Jwts.builder()
+                .claim("category", "access")
                 .claim("username", username)
                 .claim("role", "ROLE_USER")
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + 3600000))
                 .signWith(secretKey)
                 .compact();
+
+        String refreshToken = Jwts.builder()
+                .setExpiration(new Date(System.currentTimeMillis() + 360000000))
+                .signWith(secretKey)
+                .compact();
+
+        return JwtToken.builder()
+                .grantType("Bearer")
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .build();
     }
 
-    public Cookie createCookie(String key, String value) {
+    public String recreateAccessToken(String username, String email, String roles) {
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime afterHalfHour = now.plus(30, ChronoUnit.SECONDS);
+        Date accessTokenExpiresIn = convertToDate(afterHalfHour);
 
-        Cookie cookie = new Cookie(key, value);
-        cookie.setMaxAge(24*60*60);
-        //cookie.setSecure(true);
-        //cookie.setPath("/");
-        cookie.setHttpOnly(true);
-
-        return cookie;
+        return Jwts.builder()
+                .claim("auth", roles)
+                .claim("username", username)
+                .claim("email", email)
+                .setExpiration(accessTokenExpiresIn)
+                .signWith(secretKey, SignatureAlgorithm.HS256)
+                .compact();
     }
 }

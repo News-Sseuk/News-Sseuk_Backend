@@ -41,7 +41,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
         GrantedAuthority auth = iterator.next();*/
 
-        refreshTokenService.createTokens(username,response);
+        refreshTokenService.createTokens(username);
         response.setStatus(HttpStatus.OK.value());
     }
 
