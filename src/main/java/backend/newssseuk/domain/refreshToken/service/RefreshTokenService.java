@@ -4,7 +4,6 @@ import backend.newssseuk.domain.refreshToken.RefreshToken;
 import backend.newssseuk.domain.refreshToken.repository.RefreshTokenRepository;
 import backend.newssseuk.domain.user.jwt.JWTUtil;
 import backend.newssseuk.domain.user.jwt.JwtToken;
-import io.jsonwebtoken.ExpiredJwtException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,12 +16,11 @@ public class RefreshTokenService {
     private final RefreshTokenRepository refreshTokenRepository;
     private final JWTUtil jwtUtil;
 
-    public void saveRefreshToken(String username,String access, String refresh) {
+    public void saveRefreshToken(String access, String refresh) {
 
         RefreshToken refreshToken = RefreshToken.builder()
-                .username(username)
                 .accessToken(access)
-                .refresh(refresh)
+                .refreshToken(refresh)
                 .expiration(new Date(System.currentTimeMillis() + 360000000).toString())
                 .build();
 
@@ -34,12 +32,8 @@ public class RefreshTokenService {
         refreshTokenRepository.deleteByAccessToken(access);
     }
 
-    public JwtToken createTokens(String username)
+    public JwtToken createTokens(String username, String email)
     {
-        if (refreshTokenRepository.findByUsername(username) != null)
-        {
-            deleteRefresh(refreshTokenRepository.findByUsername(username).getRefresh());
-        }
-        return jwtUtil.createJwt(username);
+        return jwtUtil.createJwt(username,email);
     }
 }

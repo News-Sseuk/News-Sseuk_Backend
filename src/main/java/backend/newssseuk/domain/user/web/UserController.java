@@ -32,8 +32,8 @@ public class UserController {
     }
 
     @PostMapping("/refresh")
-    public ApiResponse<TokenResponse> refresh(@RequestBody String access) {
-        return ApiResponse.onCreate(userService.getAccessToken(access));
+    public ApiResponse<TokenResponse> refresh(@RequestBody TokenResponse access) {
+        return ApiResponse.onCreate(userService.getAccessToken(access.getAccessToken()));
     }
 
     @PostMapping("/signout")

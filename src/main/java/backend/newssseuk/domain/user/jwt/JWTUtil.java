@@ -1,66 +1,79 @@
 package backend.newssseuk.domain.user.jwt;
 
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
+import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
 import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
+import java.util.Base64;
 import java.util.Date;
-
-import static net.minidev.asm.ConvertDate.convertToDate;
 
 @Component
 public class JWTUtil {
 
-    private SecretKey secretKey;
+    private final SecretKey key;
 
-
-    public JWTUtil(@Value("${spring.jwt.secret}")String secret) {
-
-        this.secretKey = new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), Jwts.SIG.HS256.key().build().getAlgorithm());
+    public JWTUtil(@Value("${spring.jwt.secret}") String secret) {
+        byte[] byteSecretKey = secret.getBytes(StandardCharsets.UTF_8);
+        this.key = Keys.hmacShaKeyFor(byteSecretKey);
     }
 
     public String getUsername(String token) {
-
-        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("username", String.class);
-    }
-
-    public String getCategory(String token) {
-
-        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("category", String.class);
-    }
-
-    public String getRole(String token) {
-
-        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("role", String.class);
+        Claims claims = parseClaims(token);
+        return claims.getSubject();
     }
 
     public String getEmail(String token) {
-        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("email", String.class);
+        Claims claims = parseClaims(token);
+        return claims.get("email", String.class);
     }
 
     public Boolean isExpired(String token) {
-
-        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().getExpiration().before(new Date());
+        return Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .getExpiration()
+                .before(new Date());
     }
 
-    public JwtToken createJwt(String username) {
+    private Claims parseClaims(String token) {
+        try {
+            Claims claims = Jwts.parser()
+                    .setSigningKey(key)
+                    .parseClaimsJws(token)
+                    .getBody();
+            System.out.println("Claims: " + claims);
+            return claims;
+        } catch (SignatureException e) {
+            System.out.println("Invalid JWT signature: " + token);
+            System.out.println("Key : " + Base64.getEncoder().encodeToString(key.getEncoded()));
+            return null;
+        }
+    }
+
+    public JwtToken createJwt(String username, String email) {
         String accessToken = Jwts.builder()
+                .setSubject(username)
                 .claim("category", "access")
                 .claim("username", username)
+                .claim("email", email)
                 .claim("role", "ROLE_USER")
-                .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + 3600000))
-                .signWith(secretKey)
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + 3600000))
+                .signWith(key, SignatureAlgorithm.HS512)
                 .compact();
 
         String refreshToken = Jwts.builder()
+                .setSubject(username)
                 .setExpiration(new Date(System.currentTimeMillis() + 360000000))
-                .signWith(secretKey)
+                .signWith(key, SignatureAlgorithm.HS512)
                 .compact();
 
         return JwtToken.builder()
@@ -72,15 +85,20 @@ public class JWTUtil {
 
     public String recreateAccessToken(String username, String email, String roles) {
         LocalDateTime now = LocalDateTime.now();
-        LocalDateTime afterHalfHour = now.plus(30, ChronoUnit.SECONDS);
+        LocalDateTime afterHalfHour = now.plus(30, ChronoUnit.MINUTES);
         Date accessTokenExpiresIn = convertToDate(afterHalfHour);
 
         return Jwts.builder()
+                .setSubject(username)
                 .claim("auth", roles)
                 .claim("username", username)
                 .claim("email", email)
                 .setExpiration(accessTokenExpiresIn)
-                .signWith(secretKey, SignatureAlgorithm.HS256)
+                .signWith(key, SignatureAlgorithm.HS512)
                 .compact();
+    }
+
+    private Date convertToDate(LocalDateTime localDateTime) {
+        return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
     }
 }

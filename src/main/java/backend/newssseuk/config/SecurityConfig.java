@@ -33,6 +33,7 @@ public class SecurityConfig {
                                 //.requestMatchers(new AntPathRequestMatcher("/health")).permitAll()
                                 .requestMatchers(new AntPathRequestMatcher("/user/signup")).permitAll()
                                 .requestMatchers(new AntPathRequestMatcher("/user/signin")).permitAll()
+                                .requestMatchers(new AntPathRequestMatcher("/user/refresh")).permitAll()
                                 .requestMatchers(new AntPathRequestMatcher("/auth/**")).permitAll()
                                 .requestMatchers(new AntPathRequestMatcher("/swagger-ui/**")).permitAll()
                                 .requestMatchers(new AntPathRequestMatcher("/swagger-resources/**")).permitAll()

@@ -1,6 +1,6 @@
 package backend.newssseuk.domain.article;
 
-import backend.newssseuk.domain.RecommendedArticle.RecommendedArticle;
+import backend.newssseuk.domain.recommendedArticle.RecommendedArticle;
 import backend.newssseuk.domain.articleHashTag.ArticleHashTag;
 import backend.newssseuk.domain.common.BaseEntity;
 import backend.newssseuk.domain.enums.Category;
