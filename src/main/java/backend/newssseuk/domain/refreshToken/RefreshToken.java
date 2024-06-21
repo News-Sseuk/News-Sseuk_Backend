@@ -1,10 +1,8 @@
 package backend.newssseuk.domain.refreshToken;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.mongodb.core.index.Indexed;
 
 @Entity
 @Getter
@@ -17,12 +15,11 @@ public class RefreshToken {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // 추후 삭제
-    private String username;
-
+    //@Column(length = 1000)
     private String accessToken;
 
-    private String refresh;
+    //@Column(length = 1000)
+    private String refreshToken;
 
     private String expiration;
 }

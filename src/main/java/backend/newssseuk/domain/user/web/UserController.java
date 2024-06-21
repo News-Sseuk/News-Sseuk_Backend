@@ -32,8 +32,9 @@ public class UserController {
     }
 
     @PostMapping("/refresh")
-    public ApiResponse<TokenResponse> refresh(@RequestBody String access) {
-        return ApiResponse.onCreate(userService.getAccessToken(access));
+    @Operation(summary = "만료된 access토큰 재발급")
+    public ApiResponse<TokenResponse> refresh(@RequestBody TokenResponse access) {
+        return ApiResponse.onCreate(userService.getAccessToken(access.getAccessToken()));
     }
 
     @PostMapping("/signout")

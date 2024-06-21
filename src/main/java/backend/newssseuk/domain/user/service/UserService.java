@@ -20,9 +20,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
-
-
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -62,8 +59,8 @@ public class UserService {
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(email, password);
         authenticationManagerBuilder.getObject().authenticate(authenticationToken);
 
-        JwtToken jwtToken = refreshTokenService.createTokens(authenticationToken.getName());
-        refreshTokenService.saveRefreshToken(authenticationToken.getName(), jwtToken.getAccessToken(), jwtToken.getRefreshToken());
+        JwtToken jwtToken = refreshTokenService.createTokens(authenticationToken.getName(),email);
+        refreshTokenService.saveRefreshToken(jwtToken.getAccessToken(), jwtToken.getRefreshToken());
 
         return SignInResponseDto.builder()
                 .token(jwtToken)
@@ -83,15 +80,12 @@ public class UserService {
     public TokenResponse getAccessToken(String access) {
         String username = jwtUtil.getUsername(access);
         String email = jwtUtil.getEmail(access);
-        String roles = jwtUtil.getRole(access);
 
-        Optional<RefreshToken> refreshToken = refreshTokenRepository.findByAccessToken(access);
-        if(refreshToken.isEmpty()) {
-            throw new GeneralException(ErrorStatus.TOKEN_NOT_FOUND);
-        }
-        checkRefreshTokenExpire(refreshToken.get().getRefresh());
+        RefreshToken refreshToken=refreshTokenRepository.findByAccessToken(access);
+        checkRefreshTokenExpire(refreshToken.getRefreshToken());
+
         return TokenResponse.builder()
-                .accessToken(jwtUtil.recreateAccessToken(username, email, roles))
+                .accessToken(jwtUtil.recreateAccessToken(username, email, "ROLE_USER"))
                 .build();
     }
 }

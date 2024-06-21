@@ -25,7 +25,7 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
         CustomOAuth2User customUserDetails = (CustomOAuth2User) authentication.getPrincipal();
 
         String username = customUserDetails.getUsername();
-        jwtUtil.createJwt(username);
+        jwtUtil.createJwt(username,null);
         response.sendRedirect("http://localhost:3000/");
     }
 }

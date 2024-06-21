@@ -1,4 +1,4 @@
-package backend.newssseuk.domain.RecommendedArticle;
+package backend.newssseuk.domain.recommendedArticle;
 
 import backend.newssseuk.domain.article.Article;
 import backend.newssseuk.domain.common.BaseEntity;
