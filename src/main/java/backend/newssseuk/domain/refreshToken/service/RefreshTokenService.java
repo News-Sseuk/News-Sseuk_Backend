@@ -3,7 +3,7 @@ package backend.newssseuk.domain.refreshToken.service;
 import backend.newssseuk.domain.refreshToken.RefreshToken;
 import backend.newssseuk.domain.refreshToken.repository.RefreshTokenRepository;
 import backend.newssseuk.domain.user.jwt.JWTUtil;
-import backend.newssseuk.domain.user.jwt.JwtToken;
+import backend.newssseuk.domain.user.web.response.JwtToken;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

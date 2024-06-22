@@ -1,5 +1,6 @@
 package backend.newssseuk.domain.user.jwt;
 
+import backend.newssseuk.domain.user.web.response.JwtToken;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;

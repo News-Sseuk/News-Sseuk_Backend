@@ -5,7 +5,7 @@ import backend.newssseuk.domain.refreshToken.repository.RefreshTokenRepository;
 import backend.newssseuk.domain.refreshToken.service.RefreshTokenService;
 import backend.newssseuk.domain.user.User;
 import backend.newssseuk.domain.user.jwt.JWTUtil;
-import backend.newssseuk.domain.user.jwt.JwtToken;
+import backend.newssseuk.domain.user.web.response.JwtToken;
 import backend.newssseuk.domain.user.repository.UserRepository;
 import backend.newssseuk.domain.user.web.request.SignInDto;
 import backend.newssseuk.domain.user.web.request.SignUpDto;
