@@ -33,4 +33,10 @@ public class User extends BaseEntity {
     private NotificationSetting notificationSetting;
 
     private String role;
+
+    public User update(String name, String email) {
+        this.name = name;
+        this.email = email;
+        return this;
+    }
 }
