@@ -26,6 +26,8 @@ public class CrawlingService {
         System.setProperty("chromedriver", "/Users/igahyeon/Desktop/News_seuk/News-Sseuk_Backend/src/main/resources/static/chromedriver-mac-arm64");
         webDriver = new ChromeDriver();
         webDriver.get(url);
+        System.out.println("url 접근 완료");
+
         List<WebElement> articleElementList = webDriver.findElements(By.cssSelector("#_SECTION_HEADLINE_LIST_e3h8a > li:nth-child(1) > div > div > div.sa_text"));
         List<String> urlList = new ArrayList<>();
 
