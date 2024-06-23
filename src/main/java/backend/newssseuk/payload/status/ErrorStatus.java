@@ -19,7 +19,7 @@ public enum ErrorStatus implements BaseErrorCode {
     INTERNAL_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "COMMON5000",  "Internal error"),
     DATA_ACCESS_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "COMMON5001",  "Data access error"),
 
-    //MEMBER_TOKEN Error
+    //USER_TOKEN Error
     INVALID_TOKEN(HttpStatus.BAD_REQUEST,"TOKEN4001", "Invalid token"),
     EXPIRED_ACCESS_TOKEN(HttpStatus.UNAUTHORIZED,"TOKEN4002", "accessToken has expired"),
     EXPIRED_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED,"TOKEN4003", "refreshToken has expired"),
@@ -27,8 +27,9 @@ public enum ErrorStatus implements BaseErrorCode {
     UNAUTHORIZED_ACCESS(HttpStatus.UNAUTHORIZED,"TOKEN4005", "Unauthorized access, token is not valid for this operation"),
     UNSUPPORTED_TOKEN(HttpStatus.UNAUTHORIZED,"TOKEN4006", "Unsupported token access"),
 
-    //member errors
-    MEMBER_ALREADY_EXIST(HttpStatus.BAD_REQUEST, "MEMBER4001", "Member already exists"),
+    //user errors
+    USER_ALREADY_EXIST(HttpStatus.BAD_REQUEST, "USER4001", "User already exists"),
+    USER_NOT_FOUND(HttpStatus.NOT_FOUND,"User4002","User not found"),
     SNS_LOGIN_WRONG_INFORMATION(HttpStatus.BAD_REQUEST, "SNS4003", "SNS information you entered is not valid.");
 
 
