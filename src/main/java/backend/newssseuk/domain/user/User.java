@@ -3,8 +3,12 @@ package backend.newssseuk.domain.user;
 import backend.newssseuk.domain.common.BaseEntity;
 import backend.newssseuk.domain.enums.Category;
 import backend.newssseuk.domain.enums.NotificationSetting;
+import backend.newssseuk.domain.userAttendance.UserAttendance;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -25,14 +29,17 @@ public class User extends BaseEntity {
     // todo string
     private Category interestedCategory;
 
-    private Integer attendance;
+    /*private Integer attendance;
 
-    private String attendanceDate;
+    private String attendanceDate;*/
 
     // todo string
     private NotificationSetting notificationSetting;
 
     private String role;
+
+    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
+    private List<UserAttendance> userAttendanceList = new ArrayList<>();
 
     public User update(String name, String email) {
         this.name = name;

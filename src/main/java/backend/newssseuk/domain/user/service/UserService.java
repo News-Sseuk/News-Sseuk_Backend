@@ -43,7 +43,7 @@ public class UserService {
         Boolean isExist = userRepository.existsByEmail(email);
 
         if (isExist) {
-            throw new GeneralException(ErrorStatus.MEMBER_ALREADY_EXIST, "이미 가입된 회원입니다.");
+            throw new GeneralException(ErrorStatus.USER_ALREADY_EXIST, "이미 가입된 회원입니다.");
         }
         User newUser = User.builder()
                 .name(name)
