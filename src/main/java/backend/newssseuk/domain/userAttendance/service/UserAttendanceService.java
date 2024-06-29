@@ -46,6 +46,16 @@ public class UserAttendanceService {
             userAttendanceRepository.save(userAttendance);
             return null;
         });
+    }
 
+    //todo 추후 마이페이지 구현시 호출
+    public int getAttendance(Long userId)
+    {
+        User user = userService.findUserById(userId);
+        List<UserAttendance> attendances = userAttendanceRepository.findByUserId(userId);
+
+        Optional<UserAttendance> latestUserAttendance = attendances.stream()
+                .max(Comparator.comparing(attendance -> LocalDate.parse(attendance.getAttendanceDate(), dateFormatter)));
+        return latestUserAttendance.get().getAttendance();
     }
 }
