@@ -29,10 +29,6 @@ public class User extends BaseEntity {
     // todo string
     private Category interestedCategory;
 
-    /*private Integer attendance;
-
-    private String attendanceDate;*/
-
     // todo string
     private NotificationSetting notificationSetting;
 
