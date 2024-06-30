@@ -5,7 +5,8 @@ import backend.newssseuk.domain.refreshToken.repository.RefreshTokenRepository;
 import backend.newssseuk.domain.refreshToken.service.RefreshTokenService;
 import backend.newssseuk.domain.user.User;
 import backend.newssseuk.domain.user.jwt.JWTUtil;
-import backend.newssseuk.domain.user.jwt.JwtToken;
+import backend.newssseuk.domain.user.web.request.UpdateUserDto;
+import backend.newssseuk.domain.user.web.response.JwtToken;
 import backend.newssseuk.domain.user.repository.UserRepository;
 import backend.newssseuk.domain.user.web.request.SignInDto;
 import backend.newssseuk.domain.user.web.request.SignUpDto;
@@ -19,6 +20,8 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -40,7 +43,7 @@ public class UserService {
         Boolean isExist = userRepository.existsByEmail(email);
 
         if (isExist) {
-            throw new GeneralException(ErrorStatus.MEMBER_ALREADY_EXIST, "이미 가입된 회원입니다.");
+            throw new GeneralException(ErrorStatus.USER_ALREADY_EXIST, "이미 가입된 회원입니다.");
         }
         User newUser = User.builder()
                 .name(name)
@@ -87,5 +90,21 @@ public class UserService {
         return TokenResponse.builder()
                 .accessToken(jwtUtil.recreateAccessToken(username, email, "ROLE_USER"))
                 .build();
+    }
+
+    public void updateUser(Long userId, UpdateUserDto updateUserDto) {
+        Optional<User> user = userRepository.findById(userId);
+        if (user.isEmpty()) {
+            throw new GeneralException(ErrorStatus.USER_NOT_FOUND);
+        }
+        user.get().update(updateUserDto.getName(),updateUserDto.getEmail());
+    }
+
+    public User findUserById(Long userId) {
+        Optional<User> user = userRepository.findById(userId);
+        if (user.isEmpty()) {
+            throw new GeneralException(ErrorStatus.USER_NOT_FOUND);
+        }
+        return user.get();
     }
 }

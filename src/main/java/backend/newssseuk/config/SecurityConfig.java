@@ -1,7 +1,8 @@
 package backend.newssseuk.config;
 
 import backend.newssseuk.domain.user.jwt.*;
-import backend.newssseuk.domain.user.service.CustomOAuth2UserService;
+import backend.newssseuk.domain.user.oauth.CustomOAuth2SuccessHandler;
+import backend.newssseuk.domain.user.oauth.CustomOAuth2UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -34,6 +35,7 @@ public class SecurityConfig {
                                 .requestMatchers(new AntPathRequestMatcher("/user/signup")).permitAll()
                                 .requestMatchers(new AntPathRequestMatcher("/user/signin")).permitAll()
                                 .requestMatchers(new AntPathRequestMatcher("/user/refresh")).permitAll()
+                                .requestMatchers(new AntPathRequestMatcher("/api/crawling")).permitAll()
                                 .requestMatchers(new AntPathRequestMatcher("/auth/**")).permitAll()
                                 .requestMatchers(new AntPathRequestMatcher("/swagger-ui/**")).permitAll()
                                 .requestMatchers(new AntPathRequestMatcher("/swagger-resources/**")).permitAll()

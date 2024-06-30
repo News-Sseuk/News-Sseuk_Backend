@@ -1,4 +1,4 @@
-package backend.newssseuk.domain.user.jwt;
+package backend.newssseuk.domain.user.web.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

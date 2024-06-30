@@ -1,5 +1,6 @@
-package backend.newssseuk.domain.user.jwt;
+package backend.newssseuk.domain.user.oauth;
 
+import backend.newssseuk.domain.user.jwt.JWTUtil;
 import backend.newssseuk.domain.user.web.request.CustomOAuth2User;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
