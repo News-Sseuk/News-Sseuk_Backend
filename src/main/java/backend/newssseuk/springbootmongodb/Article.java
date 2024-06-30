@@ -4,7 +4,7 @@ import jakarta.persistence.Id;
 import lombok.*;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document(collection = "naver-articles")
+@Document(collection = "Articles")
 @Data
 @Builder
 @AllArgsConstructor
