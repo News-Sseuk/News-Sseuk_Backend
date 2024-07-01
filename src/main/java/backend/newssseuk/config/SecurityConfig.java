@@ -1,8 +1,8 @@
 package backend.newssseuk.config;
 
 import backend.newssseuk.domain.user.jwt.*;
-import backend.newssseuk.domain.user.oauth.CustomOAuth2SuccessHandler;
-import backend.newssseuk.domain.user.oauth.CustomOAuth2UserService;
+import backend.newssseuk.domain.user.jwt.oauth.CustomOAuth2SuccessHandler;
+import backend.newssseuk.domain.user.jwt.oauth.CustomOAuth2UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

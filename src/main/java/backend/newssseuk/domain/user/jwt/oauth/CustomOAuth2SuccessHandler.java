@@ -1,4 +1,4 @@
-package backend.newssseuk.domain.user.oauth;
+package backend.newssseuk.domain.user.jwt.oauth;
 
 import backend.newssseuk.domain.user.jwt.JWTUtil;
 import backend.newssseuk.domain.user.web.request.CustomOAuth2User;
