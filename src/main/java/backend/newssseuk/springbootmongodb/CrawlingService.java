@@ -54,8 +54,7 @@ public class CrawlingService {
                             .content(contentElement.getText())
                             .build();
 
-                    //todo article id 자동생성 처리 후 save
-                    //articleRepository.save(article);
+                    articleRepository.save(article);
 
                     driver.navigate().back();
                     wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"newsct\"]")));
