@@ -1,10 +1,13 @@
 package backend.newssseuk.springbootmongodb;
 
+import com.mongodb.lang.Nullable;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.*;
 import org.springframework.data.mongodb.core.mapping.Document;
+
+import java.util.List;
 
 @Document(collection = "Articles")
 @Data
@@ -20,9 +23,10 @@ public class Article {
 
     private String press;
 
+    @Nullable
     private String journalist;
 
-    private String image;
+    private List<String> image;
 
     private String content;
 }
