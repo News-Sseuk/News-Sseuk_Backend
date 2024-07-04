@@ -1,8 +1,13 @@
 package backend.newssseuk.springbootmongodb;
 
+import com.mongodb.lang.Nullable;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.*;
 import org.springframework.data.mongodb.core.mapping.Document;
+
+import java.util.List;
 
 @Document(collection = "Articles")
 @Data
@@ -11,15 +16,17 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @NoArgsConstructor
 public class Article {
     @Id
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private String id;
 
     private String title;
 
     private String press;
 
+    @Nullable
     private String journalist;
 
-    private String image;
+    private List<String> image;
 
     private String content;
 }

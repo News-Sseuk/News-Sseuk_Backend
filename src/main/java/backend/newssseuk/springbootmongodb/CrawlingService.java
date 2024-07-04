@@ -3,17 +3,17 @@ package backend.newssseuk.springbootmongodb;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.By;
-import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Slf4j
 @Service
@@ -21,58 +21,68 @@ import java.util.List;
 public class CrawlingService {
     @Value("${chrome.driver.path}")
     private String chromeDriverPath;
-
     private final ArticleRepository articleRepository;
-    WebDriver driver;
-    public List<Article> getCrawlingInfos() {
+
+    WebDriver webDriver;
+    public void getCrawlingInfos() {
         int i = 1;
 
         // 네이버 뉴스 (정치 section 중 헤드라인 뉴스)
         String url = "https://news.naver.com/section/100";
         System.setProperty("webdriver.chrome.driver", chromeDriverPath);
-        driver = new ChromeDriver();
-        driver.get(url);
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(60));
+        webDriver = new ChromeDriver();
+        webDriver.get(url);
+        WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(60));
+        wait.withTimeout(Duration.ofSeconds(5));  // 5초 대기
 
-        while (true) {
-            try {
-                WebElement timeElement = driver.findElement(By.xpath(String.format("//*[@id=\"newsct\"]/div[4]/div/div[1]/div[1]/ul/li[%d]/div/div/div[2]/div[2]/div[1]/div[2]/b", i)));
-                String timeText = timeElement.getText();
-                int minutesAgo = Integer.parseInt(timeText.replaceAll("[^0-9]", ""));
+        List<WebElement> articleElementList = webDriver.findElements(By.cssSelector(".sa_text_title"));
+        List<String> urlList = new ArrayList<>();
 
-                if (minutesAgo <= 30) {
-                    WebElement articleLink = driver.findElement(By.xpath(String.format("//*[@id=\"newsct\"]/div[4]/div/div[1]/div[1]/ul/li[%d]/div/div/div[2]/a/strong", i)));
-                    articleLink.click();
-
-                    WebElement titleElement = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"title_area\"]/span")));
-                    WebElement pressElement = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"ct\"]/div[1]/div[1]/a/img[1]")));
-                    WebElement contentElement = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"dic_area\"]")));
-
-                    Article article = Article.builder()
-                            .title(titleElement.getText())
-                            .press(pressElement.getAccessibleName())
-                            .content(contentElement.getText())
-                            .build();
-
-                    //todo article id 자동생성 처리 후 save
-                    //articleRepository.save(article);
-
-                    driver.navigate().back();
-                    wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id=\"newsct\"]")));
-                } else {
-                    break;
-                }
-                i++;
-            } catch (NoSuchElementException e) {
-                System.out.println("No more articles found or an element was not found.");
-                break;
-            } catch (Exception e) {
-                e.printStackTrace();
-                break;
-            }
+        // 기사들 url 수집
+        for (WebElement articleEl : articleElementList){
+            urlList.add(articleEl.getAttribute("href"));
         }
 
-        driver.quit();
-        return null;
+        // 개별 기사 데이터 수집
+        for (String articleUrl : urlList){
+            webDriver.get(articleUrl);
+            WebElement elementTitle = webDriver.findElement(By.cssSelector(".media_end_head_headline"));
+
+            WebElement elementJournalist = null;
+            try {
+                elementJournalist = webDriver.findElement(By.cssSelector(".media_end_head_journalist_box"));
+            } catch (Exception e1) {
+                try {
+                    elementJournalist = webDriver.findElement(By.cssSelector(".media_end_head_journalist_name"));
+                }
+                // 아예 기자 데이터가 없을 때 (본문 안에 포함되어 있는 경우)
+                catch (Exception e2) {
+                }
+            }
+
+            WebElement elementPress = webDriver.findElement(By.cssSelector(".media_end_head_top_logo_img"));
+            WebElement elementContent = webDriver.findElement(By.cssSelector(".newsct_article"));
+            List<WebElement> elementImage = webDriver.findElements(By.cssSelector(".nbd_a img"));
+
+            List<String> imageList = new ArrayList<>();
+            for (WebElement imageEl : elementImage){
+                imageList.add(imageEl.getAttribute("src"));
+            }
+
+            // 기자 데이터가 없는 경우 null 처리
+            String journalistName = (elementJournalist != null) ? elementJournalist.getText() : null;
+
+            Article article = Article.builder()
+                    .title(elementTitle.getText())
+                    .journalist(journalistName)
+                    .press(elementPress.getAttribute("alt"))
+                    .content(elementContent.getText())
+                    .image(imageList)
+                    .build();
+
+            articleRepository.save(article);
+        }
+
+        webDriver.quit();
     }
 }
