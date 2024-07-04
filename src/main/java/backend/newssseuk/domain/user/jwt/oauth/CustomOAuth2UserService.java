@@ -1,4 +1,4 @@
-package backend.newssseuk.domain.user.oauth;
+package backend.newssseuk.domain.user.jwt.oauth;
 
 import backend.newssseuk.domain.user.User;
 import backend.newssseuk.domain.user.repository.UserRepository;
