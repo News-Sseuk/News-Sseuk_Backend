@@ -8,8 +8,8 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 
 @SpringBootApplication
 @EnableJpaAuditing
-@ComponentScan(basePackages = {"backend.newssseuk.springbootmongodb"})
-@EnableMongoRepositories(basePackages = {"backend.newssseuk.springbootmongodb"})
+//@ComponentScan(basePackages = {"backend.newssseuk.springbootmongodb"})
+//@EnableMongoRepositories(basePackages = {"backend.newssseuk.springbootmongodb"})
 public class NewsSseukApplication {
     public static void main(String[] args) {
         SpringApplication.run(NewsSseukApplication.class, args);
