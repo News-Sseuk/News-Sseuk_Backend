@@ -1,5 +1,6 @@
 package backend.newssseuk.springbootmongodb;
 
+import backend.newssseuk.domain.article.repository.JpaArticleRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.By;
@@ -21,6 +22,7 @@ public class CrawlingService {
     @Value("${chrome.driver.path}")
     private String chromeDriverPath;
     private final ArticleRepository articleRepository;
+    private final JpaArticleRepository jpaArticleRepository;
 
     WebDriver webDriver;
     public void getCrawlingInfos(String url) {
@@ -80,8 +82,12 @@ public class CrawlingService {
                     .content(elementContent.getText())
                     .image(imageList)
                     .build();
-
-            articleRepository.save(article);
+            Article savedArticle = articleRepository.save(article);
+            System.out.println("!!!!!!!!!!!"+savedArticle.getId());
+            backend.newssseuk.domain.article.Article jpaArticle = backend.newssseuk.domain.article.Article.builder()
+                    .nosqlId(savedArticle.getId())
+                    .build();
+            jpaArticleRepository.save(jpaArticle);
         }
 
         webDriver.quit();
