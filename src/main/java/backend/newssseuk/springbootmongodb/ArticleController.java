@@ -1,8 +1,6 @@
 package backend.newssseuk.springbootmongodb;
 
-import backend.newssseuk.payload.ApiResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin
@@ -13,6 +11,7 @@ public class ArticleController {
 
     @GetMapping("api/crawling")
     public void crawling(){
-        crawlingService.getCrawlingInfos();
+        String url = "https://news.naver.com/section/100";
+        crawlingService.getCrawlingInfos(url);
     }
 }

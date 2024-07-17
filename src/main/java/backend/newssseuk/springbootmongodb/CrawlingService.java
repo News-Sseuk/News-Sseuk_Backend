@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 @Slf4j
 @Service
@@ -24,23 +23,25 @@ public class CrawlingService {
     private final ArticleRepository articleRepository;
 
     WebDriver webDriver;
-    public void getCrawlingInfos() {
-        int i = 1;
-
-        // 네이버 뉴스 (정치 section 중 헤드라인 뉴스)
-        String url = "https://news.naver.com/section/100";
+    public void getCrawlingInfos(String url) {
         System.setProperty("webdriver.chrome.driver", chromeDriverPath);
         webDriver = new ChromeDriver();
         webDriver.get(url);
         WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(60));
-        wait.withTimeout(Duration.ofSeconds(5));  // 5초 대기
+        wait.withTimeout(Duration.ofSeconds(5));  //5초 대기
 
-        List<WebElement> articleElementList = webDriver.findElements(By.cssSelector(".sa_text_title"));
+        List<WebElement> articleElementList = webDriver.findElements(By.xpath("//*[@id=\"newsct\"]/div[4]"));
         List<String> urlList = new ArrayList<>();
 
         // 기사들 url 수집
-        for (WebElement articleEl : articleElementList){
-            urlList.add(articleEl.getAttribute("href"));
+        for (WebElement articleEl : articleElementList) {
+            WebElement timeElement = articleEl.findElement(By.cssSelector(".sa_text_datetime.is_recent b"));
+            String timeText = timeElement.getText();
+            int minutesAgo = Integer.parseInt(timeText.replaceAll("[^0-9]", ""));
+            if (minutesAgo > 30) {
+                break;
+            }
+            urlList.add(articleEl.findElement(By.cssSelector(".sa_text_title")).getAttribute("href"));
         }
 
         // 개별 기사 데이터 수집
