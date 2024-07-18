@@ -1,5 +1,6 @@
 package backend.newssseuk.springbootmongodb;
 
+import backend.newssseuk.domain.article.repository.JpaArticleRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.By;
@@ -21,6 +22,7 @@ public class CrawlingService {
     @Value("${chrome.driver.path}")
     private String chromeDriverPath;
     private final ArticleRepository articleRepository;
+    private final JpaArticleRepository jpaArticleRepository;
 
     WebDriver webDriver;
     public void getCrawlingInfos(String url) {
@@ -30,7 +32,7 @@ public class CrawlingService {
         WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(60));
         wait.withTimeout(Duration.ofSeconds(5));  //5초 대기
 
-        List<WebElement> articleElementList = webDriver.findElements(By.xpath("//*[@id=\"newsct\"]/div[4]"));
+        List<WebElement> articleElementList = webDriver.findElement(By.xpath("//*[@id=\"newsct\"]/div[4]/div/div[1]/div[1]/ul")).findElements(By.cssSelector(".sa_item"));
         List<String> urlList = new ArrayList<>();
 
         // 기사들 url 수집
@@ -42,6 +44,9 @@ public class CrawlingService {
                 break;
             }
             urlList.add(articleEl.findElement(By.cssSelector(".sa_text_title")).getAttribute("href"));
+        }
+        for (String articleUrl : urlList) {
+            System.out.println("11111111" + articleUrl);
         }
 
         // 개별 기사 데이터 수집
@@ -80,8 +85,11 @@ public class CrawlingService {
                     .content(elementContent.getText())
                     .image(imageList)
                     .build();
-
-            articleRepository.save(article);
+            Article savedArticle = articleRepository.save(article);
+            backend.newssseuk.domain.article.Article jpaArticle = backend.newssseuk.domain.article.Article.builder()
+                    .nosqlId(savedArticle.getId())
+                    .build();
+            jpaArticleRepository.save(jpaArticle);
         }
 
         webDriver.quit();
