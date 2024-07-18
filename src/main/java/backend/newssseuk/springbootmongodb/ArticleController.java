@@ -11,7 +11,7 @@ public class ArticleController {
 
     @GetMapping("api/crawling")
     public void crawling(){
-        String url = "https://news.naver.com/section/102";
+        String url = "https://news.naver.com/section/100";
         crawlingService.getCrawlingInfos(url);
     }
 }

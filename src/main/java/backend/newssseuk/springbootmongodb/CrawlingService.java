@@ -32,7 +32,7 @@ public class CrawlingService {
         WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(60));
         wait.withTimeout(Duration.ofSeconds(5));  //5초 대기
 
-        List<WebElement> articleElementList = webDriver.findElements(By.xpath("//*[@id=\"newsct\"]/div[4]"));
+        List<WebElement> articleElementList = webDriver.findElement(By.xpath("//*[@id=\"newsct\"]/div[4]/div/div[1]/div[1]/ul")).findElements(By.cssSelector(".sa_item"));
         List<String> urlList = new ArrayList<>();
 
         // 기사들 url 수집
@@ -44,6 +44,9 @@ public class CrawlingService {
                 break;
             }
             urlList.add(articleEl.findElement(By.cssSelector(".sa_text_title")).getAttribute("href"));
+        }
+        for (String articleUrl : urlList) {
+            System.out.println("11111111" + articleUrl);
         }
 
         // 개별 기사 데이터 수집
@@ -83,7 +86,6 @@ public class CrawlingService {
                     .image(imageList)
                     .build();
             Article savedArticle = articleRepository.save(article);
-            System.out.println("!!!!!!!!!!!"+savedArticle.getId());
             backend.newssseuk.domain.article.Article jpaArticle = backend.newssseuk.domain.article.Article.builder()
                     .nosqlId(savedArticle.getId())
                     .build();

@@ -26,11 +26,11 @@ public class Article extends BaseEntity {
     private List<ArticleHashTag> articleHashTagList = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "recommended_article")
+    @JoinColumn(name = "recommended_article_id")
     private RecommendedArticle recommendedArticle;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_history")
+    @JoinColumn(name = "user_history_id")
     private UserHistory userHistory;
 
     /*@ElementCollection
