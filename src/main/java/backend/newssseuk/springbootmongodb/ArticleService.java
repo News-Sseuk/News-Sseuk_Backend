@@ -11,6 +11,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
@@ -30,6 +31,8 @@ public class ArticleService {
     private final ArticleRedisRepository articleRedisRepository;
     private final JpaArticleRepository jpaArticleRepository;
     WebDriver webDriver;
+
+    @Scheduled(fixedDelay = 2000) // 밀리세컨 단위
     public void getCrawlingInfos(String url) {
         System.setProperty("webdriver.chrome.driver", chromeDriverPath);
         webDriver = new ChromeDriver();

@@ -1,6 +1,7 @@
 package backend.newssseuk.springbootmongodb.dto;
 
 import backend.newssseuk.springbootmongodb.Article;
+import backend.newssseuk.springbootmongodb.ArticleRepository;
 import com.mongodb.lang.Nullable;
 import lombok.*;
 

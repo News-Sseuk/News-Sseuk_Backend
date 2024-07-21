@@ -33,6 +33,10 @@ public class Article {
     @JoinColumn(name = "user_history_id")
     private UserHistory userHistory;
 
+    // ArticleHelper를 통해 MongoDB 객체를 가져오는 메서드
+    public backend.newssseuk.springbootmongodb.Article getMongoEntity(ArticleHelper articleHelper) {
+        return articleHelper.getMongoEntityByNosqlId(this.nosqlId);
+    }
     /*@ElementCollection
     private List<String> keywordList = new ArrayList<>();
 

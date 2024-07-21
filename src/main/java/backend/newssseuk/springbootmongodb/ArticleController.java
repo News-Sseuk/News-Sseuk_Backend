@@ -9,10 +9,10 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class ArticleController {
     private final ArticleService crawlingService;
-    private final ArticleRepository articleRepository;
 
     @GetMapping("api/crawling")
     public void crawling(){
+        // 100 : 정치, 101 : 경제, 102 : 사회, 103 : 생활/문화, 104 : 세계, 105 : IT/과학
         String url = "https://news.naver.com/section/100";
         crawlingService.getCrawlingInfos(url);
     }
