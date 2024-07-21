@@ -9,7 +9,7 @@ import lombok.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity
+@Entity(name="recommended_article")
 @Getter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -24,5 +24,5 @@ public class RecommendedArticle extends BaseEntity {
     private User user;
 
     @OneToMany(mappedBy = "recommendedArticle", cascade = CascadeType.ALL)
-    List<Article> recommendArticleList = new ArrayList<>();
+    List<Article> articleList = new ArrayList<>();
 }

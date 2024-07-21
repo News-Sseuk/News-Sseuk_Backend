@@ -32,4 +32,18 @@ public class Article {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_history_id")
     private UserHistory userHistory;
+
+    /*@ElementCollection
+    private List<String> keywordList = new ArrayList<>();
+
+    @ElementCollection
+    private List<String> imageList = new ArrayList<>();
+
+    private float reliability;
+
+    private String summary;
+
+    private Category category;
+
+    private Trending trending;*/
 }

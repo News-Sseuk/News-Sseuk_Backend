@@ -8,7 +8,7 @@ import lombok.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity
+@Entity(name="user_history")
 @Getter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -23,7 +23,7 @@ public class UserHistory {
     private User user;
 
     @OneToMany(mappedBy = "userHistory", cascade = CascadeType.ALL)
-    List<Article> readingHistoryList = new ArrayList<>();
+    List<Article> articleList = new ArrayList<>();
 
     @ElementCollection
     List<String> searchHistoryList = new ArrayList<>();
