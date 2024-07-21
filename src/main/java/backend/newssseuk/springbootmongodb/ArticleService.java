@@ -1,5 +1,7 @@
 package backend.newssseuk.springbootmongodb;
 
+import backend.newssseuk.springbootmongodb.dto.ArticleResponseDto;
+import backend.newssseuk.springbootmongodb.redis.ArticleRedisRepository;
 import backend.newssseuk.domain.article.repository.JpaArticleRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,16 +16,19 @@ import org.springframework.stereotype.Service;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class CrawlingService {
+public class ArticleService {
     @Value("${chrome.driver.path}")
     private String chromeDriverPath;
-    private final ArticleRepository articleRepository;
-    private final JpaArticleRepository jpaArticleRepository;
 
+    private final ArticleRepository articleRepository;
+    private final ArticleRedisRepository articleRedisRepository;
+    private final JpaArticleRepository jpaArticleRepository;
     WebDriver webDriver;
     public void getCrawlingInfos(String url) {
         System.setProperty("webdriver.chrome.driver", chromeDriverPath);
@@ -93,5 +98,27 @@ public class CrawlingService {
         }
 
         webDriver.quit();
+    }
+
+    public Article cashingArticles(String id) {
+        // mongodb에서 기사 데이터 가져옴
+        Optional<Article> article = articleRepository.findById(id);
+        try {
+            Article savedArticle = articleRedisRepository.save(article.get());
+            return savedArticle;
+        }
+        catch (Exception e){
+            throw new NoSuchElementException("해당 데이터가 없습니다.");
+        }
+    }
+
+    public ArticleResponseDto findArticles(String id) {
+        // redis에 있는 지 찾아보고
+        // 등록 안되어있으면, mongodb에서 findById 해서 등록 (cashingArticles 함수 실행)
+        Optional<Article> article = articleRedisRepository.findById(id);
+        if (article.isPresent()) {
+            return new ArticleResponseDto(article.get());
+        } else {
+            return new ArticleResponseDto(cashingArticles(id));}
     }
 }

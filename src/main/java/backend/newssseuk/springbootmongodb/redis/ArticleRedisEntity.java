@@ -1,22 +1,21 @@
-package backend.newssseuk.springbootmongodb;
+package backend.newssseuk.springbootmongodb.redis;
 
 import com.mongodb.lang.Nullable;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.*;
-import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.redis.core.RedisHash;
+import org.springframework.data.redis.core.index.Indexed;
 
 import java.util.List;
 
-@Document(collection = "Articles")
-@Data
-@Builder
+@RedisHash(value="article", timeToLive=86400) // 1일 단위로 캐싱
+@Getter
+@Setter
+@ToString
 @AllArgsConstructor
 @NoArgsConstructor
-public class Article {
+public class ArticleRedisEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private String id;
 
     private String title;
@@ -30,5 +29,6 @@ public class Article {
 
     private String content;
 
+    @Indexed
     private String category;
 }
