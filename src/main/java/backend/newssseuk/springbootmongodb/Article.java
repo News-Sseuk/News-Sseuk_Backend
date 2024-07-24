@@ -1,6 +1,8 @@
 package backend.newssseuk.springbootmongodb;
 
+import backend.newssseuk.domain.enums.Category;
 import com.mongodb.lang.Nullable;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -30,5 +32,6 @@ public class Article {
 
     private String content;
 
-    private String category;
+    @ElementCollection
+    private Category category;
 }
