@@ -28,6 +28,6 @@ public class ArticleResponseDto {
         this.journalist = article.getJournalist();
         this.image = article.getImage();
         this.content = article.getContent();
-        this.category = article.getCategory();
+        this.category = article.getCategory().toString();
     }
 }

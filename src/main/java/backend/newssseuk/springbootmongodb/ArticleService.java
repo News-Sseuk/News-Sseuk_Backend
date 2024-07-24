@@ -1,5 +1,7 @@
 package backend.newssseuk.springbootmongodb;
 
+import backend.newssseuk.domain.enums.Category;
+import backend.newssseuk.springbootmongodb.converter.CategoryConverter;
 import backend.newssseuk.springbootmongodb.dto.ArticleResponseDto;
 import backend.newssseuk.springbootmongodb.redis.ArticleRedisRepository;
 import backend.newssseuk.domain.article.repository.JpaArticleRepository;
@@ -30,9 +32,10 @@ public class ArticleService {
     private final ArticleRepository articleRepository;
     private final ArticleRedisRepository articleRedisRepository;
     private final JpaArticleRepository jpaArticleRepository;
+    private final CategoryConverter categoryConverter;
     WebDriver webDriver;
 
-    @Scheduled(fixedDelay = 2000) // 밀리세컨 단위
+    //@Scheduled(fixedDelay = 2000) // 밀리세컨 단위
     public void getCrawlingInfos(String url) {
         System.setProperty("webdriver.chrome.driver", chromeDriverPath);
         webDriver = new ChromeDriver();
@@ -40,7 +43,9 @@ public class ArticleService {
         WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(60));
         wait.withTimeout(Duration.ofSeconds(5));  //5초 대기
 
-        List<WebElement> articleElementList = webDriver.findElement(By.xpath("//*[@id=\"newsct\"]/div[4]/div/div[1]/div[1]/ul")).findElements(By.cssSelector(".sa_item"));
+        String name = webDriver.findElement(By.xpath("//*[@id=\"newsct\"]/div[1]/div[1]/h3")).getText();
+        Category category = categoryConverter.fromKrCategory(name);
+        List<WebElement> articleElementList = webDriver.findElements(By.cssSelector(".sa_text"));
         List<String> urlList = new ArrayList<>();
 
         // 기사들 url 수집
@@ -52,9 +57,6 @@ public class ArticleService {
                 break;
             }
             urlList.add(articleEl.findElement(By.cssSelector(".sa_text_title")).getAttribute("href"));
-        }
-        for (String articleUrl : urlList) {
-            System.out.println("11111111" + articleUrl);
         }
 
         // 개별 기사 데이터 수집
@@ -87,6 +89,7 @@ public class ArticleService {
             String journalistName = (elementJournalist != null) ? elementJournalist.getText() : null;
 
             Article article = Article.builder()
+                    .category(category)
                     .title(elementTitle.getText())
                     .journalist(journalistName)
                     .press(elementPress.getAttribute("alt"))
