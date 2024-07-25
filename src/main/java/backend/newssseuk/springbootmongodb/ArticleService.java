@@ -3,6 +3,7 @@ package backend.newssseuk.springbootmongodb;
 import backend.newssseuk.domain.enums.Category;
 import backend.newssseuk.springbootmongodb.converter.CategoryConverter;
 import backend.newssseuk.springbootmongodb.dto.ArticleResponseDto;
+import backend.newssseuk.springbootmongodb.redis.ArticleRedisEntity;
 import backend.newssseuk.springbootmongodb.redis.ArticleRedisRepository;
 import backend.newssseuk.domain.article.repository.JpaArticleRepository;
 import lombok.RequiredArgsConstructor;
@@ -13,8 +14,11 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.util.ArrayList;
@@ -25,6 +29,7 @@ import java.util.Optional;
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class ArticleService {
     @Value("${chrome.driver.path}")
     private String chromeDriverPath;
@@ -33,6 +38,7 @@ public class ArticleService {
     private final ArticleRedisRepository articleRedisRepository;
     private final JpaArticleRepository jpaArticleRepository;
     private final CategoryConverter categoryConverter;
+
     WebDriver webDriver;
 
     //@Scheduled(fixedDelay = 2000) // 밀리세컨 단위
@@ -106,25 +112,35 @@ public class ArticleService {
         webDriver.quit();
     }
 
-    public Article cashingArticles(String id) {
+    @Transactional
+    @Cacheable(value = "Article", key = "#articleId", cacheManager = "cacheManager")
+    public ArticleRedisEntity cashingArticles(String id) {
         // mongodb에서 기사 데이터 가져옴
         Optional<Article> article = articleRepository.findById(id);
         try {
-            Article savedArticle = articleRedisRepository.save(article.get());
-            return savedArticle;
+            return articleRedisRepository.save(ArticleRedisEntity.builder()
+                    .title(article.get().getTitle())
+                    .press(article.get().getPress())
+                    .journalist(article.get().getJournalist())
+                    .image(article.get().getImage())
+                    .content(article.get().getContent())
+                    .category(article.get().getCategory())
+                    .build());
         }
-        catch (Exception e){
+        catch (Exception e) {
             throw new NoSuchElementException("해당 데이터가 없습니다.");
         }
     }
 
+
     public ArticleResponseDto findArticles(String id) {
         // redis에 있는 지 찾아보고
         // 등록 안되어있으면, mongodb에서 findById 해서 등록 (cashingArticles 함수 실행)
-        Optional<Article> article = articleRedisRepository.findById(id);
-        if (article.isPresent()) {
-            return new ArticleResponseDto(article.get());
+        Optional<ArticleRedisEntity> articleRedisEntity = articleRedisRepository.findById(id);
+        if (articleRedisEntity.isPresent()) {
+            return new ArticleResponseDto(articleRedisEntity.get());
         } else {
-            return new ArticleResponseDto(cashingArticles(id));}
+            ArticleRedisEntity cashed_article = cashingArticles(id);
+            return new ArticleResponseDto(cashed_article);}
     }
 }

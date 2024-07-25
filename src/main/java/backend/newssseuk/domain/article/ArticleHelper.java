@@ -1,7 +1,8 @@
 package backend.newssseuk.domain.article;
 
 import backend.newssseuk.springbootmongodb.Article;
-import backend.newssseuk.springbootmongodb.ArticleRepository;
+import backend.newssseuk.springbootmongodb.redis.ArticleRedisEntity;
+import backend.newssseuk.springbootmongodb.redis.ArticleRedisRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -9,9 +10,9 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class ArticleHelper {
-    private final ArticleRepository articleRepository;
+    private final ArticleRedisRepository articleRedisRepository;
 
-    public Article getMongoEntityByNosqlId(String nosqlId) {
-        return articleRepository.findById(nosqlId).orElse(null);
+    public ArticleRedisEntity getRedisEntityByNosqlId(String nosqlId) {
+        return articleRedisRepository.findById(nosqlId).orElse(null);
     }
 }

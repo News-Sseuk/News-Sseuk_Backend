@@ -5,8 +5,8 @@ import org.springframework.data.repository.CrudRepository;
 
 import java.util.Optional;
 
-public interface ArticleRedisRepository extends CrudRepository<Article,String> {
+public interface ArticleRedisRepository extends CrudRepository<ArticleRedisEntity,String> {
 
-    Article save(Article article);
-    Optional<Article> findById(String id);
+    ArticleRedisEntity save(ArticleRedisEntity article);
+    Optional<ArticleRedisEntity> findById(String id);
 }
