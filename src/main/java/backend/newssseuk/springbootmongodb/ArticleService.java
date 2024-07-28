@@ -5,112 +5,75 @@ import backend.newssseuk.springbootmongodb.converter.CategoryConverter;
 import backend.newssseuk.springbootmongodb.dto.ArticleResponseDto;
 import backend.newssseuk.springbootmongodb.redis.ArticleRedisEntity;
 import backend.newssseuk.springbootmongodb.redis.ArticleRedisRepository;
-import backend.newssseuk.domain.article.repository.JpaArticleRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.*;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional
 public class ArticleService {
-    @Value("${chrome.driver.path}")
-    private String chromeDriverPath;
 
     private final ArticleRepository articleRepository;
     private final ArticleRedisRepository articleRedisRepository;
-    private final JpaArticleRepository jpaArticleRepository;
     private final CategoryConverter categoryConverter;
+    private final EachArticleService eachArticleService;
+    private final ThreadLocalService threadLocalService;
 
     WebDriver webDriver;
 
     //@Scheduled(fixedDelay = 2000) // 밀리세컨 단위
     public void getCrawlingInfos(String url) {
-        System.setProperty("webdriver.chrome.driver", chromeDriverPath);
-        webDriver = new ChromeDriver();
+        webDriver = threadLocalService.getDriver();
+
         webDriver.get(url);
         WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(60));
         wait.withTimeout(Duration.ofSeconds(5));  //5초 대기
 
-        String name = webDriver.findElement(By.xpath("//*[@id=\"newsct\"]/div[1]/div[1]/h3")).getText();
-        Category category = categoryConverter.fromKrCategory(name);
-        List<WebElement> articleElementList = webDriver.findElements(By.cssSelector(".sa_text"));
-        List<String> urlList = new ArrayList<>();
+        List<WebElement> categoryList = webDriver.findElements(By.cssSelector("#ct_wrap > div.ct_scroll_wrapper > div.column0 > div > ul > li > a"));
 
-        // 기사들 url 수집
-        for (WebElement articleEl : articleElementList) {
-            WebElement timeElement = articleEl.findElement(By.cssSelector(".sa_text_datetime.is_recent b"));
-            String timeText = timeElement.getText();
-            int minutesAgo = Integer.parseInt(timeText.replaceAll("[^0-9]", ""));
-            if (minutesAgo > 30) {
-                break;
-            }
-            urlList.add(articleEl.findElement(By.cssSelector(".sa_text_title")).getAttribute("href"));
-        }
 
-        // 개별 기사 데이터 수집
-        for (String articleUrl : urlList){
-            webDriver.get(articleUrl);
-            WebElement elementTitle = webDriver.findElement(By.cssSelector(".media_end_head_headline"));
+        for (int i=1; i<=categoryList.size(); i++) {
+            String category_xpath = String.format("//*[@id=\"ct_wrap\"]/div[2]/div[1]/div/ul/li[%d]/a", i);
+            String category_button_url = webDriver.findElement(By.xpath(category_xpath)).getAttribute("href");
+            String category_name = webDriver.findElement(By.xpath(category_xpath)).getText();
+            Category category = categoryConverter.fromKrCategory(category_name);
 
-            WebElement elementJournalist = null;
-            try {
-                elementJournalist = webDriver.findElement(By.cssSelector(".media_end_head_journalist_box"));
-            } catch (Exception e1) {
-                try {
-                    elementJournalist = webDriver.findElement(By.cssSelector(".media_end_head_journalist_name"));
+            webDriver.get(category_button_url);
+
+            List<WebElement> articleElementList = webDriver.findElements(By.cssSelector(".sa_text"));
+            List<String> urlList = new ArrayList<>();
+
+            // 기사들 url 수집
+            for (WebElement articleEl : articleElementList) {
+                WebElement timeElement = articleEl.findElement(By.cssSelector(".sa_text_datetime b"));
+                String timeText = timeElement.getText();
+                int minutesAgo = Integer.parseInt(timeText.replaceAll("[^0-9]", ""));
+                if (minutesAgo > 30) {
+                    continue;
                 }
-                // 아예 기자 데이터가 없을 때 (본문 안에 포함되어 있는 경우)
-                catch (Exception e2) {
-                }
+                urlList.add(articleEl.findElement(By.cssSelector(".sa_text_title")).getAttribute("href"));
             }
-
-            WebElement elementPress = webDriver.findElement(By.cssSelector(".media_end_head_top_logo_img"));
-            WebElement elementContent = webDriver.findElement(By.cssSelector(".newsct_article"));
-            List<WebElement> elementImage = webDriver.findElements(By.cssSelector(".nbd_a img"));
-
-            List<String> imageList = new ArrayList<>();
-            for (WebElement imageEl : elementImage){
-                imageList.add(imageEl.getAttribute("src"));
-            }
-
-            // 기자 데이터가 없는 경우 null 처리
-            String journalistName = (elementJournalist != null) ? elementJournalist.getText() : null;
-
-            Article article = Article.builder()
-                    .category(category)
-                    .title(elementTitle.getText())
-                    .journalist(journalistName)
-                    .press(elementPress.getAttribute("alt"))
-                    .content(elementContent.getText())
-                    .image(imageList)
-                    .build();
-            Article savedArticle = articleRepository.save(article);
-            backend.newssseuk.domain.article.Article jpaArticle = backend.newssseuk.domain.article.Article.builder()
-                    .nosqlId(savedArticle.getId())
-                    .build();
-            jpaArticleRepository.save(jpaArticle);
+            eachArticleService.getEachArticles(category, urlList);
+            //디버깅
+            System.out.println(category.getKorean());
         }
-
-        webDriver.quit();
+        threadLocalService.quitDriver();
     }
+
 
     @Transactional
     @Cacheable(value = "Article", key = "#articleId", cacheManager = "cacheManager")
