@@ -35,7 +35,6 @@ public class ArticleService {
 
     WebDriver webDriver;
 
-    //@Scheduled(fixedDelay = 2000) // 밀리세컨 단위
     public void getCrawlingInfos(String url) {
         webDriver = threadLocalService.getDriver();
 
