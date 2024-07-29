@@ -2,6 +2,7 @@ package backend.newssseuk.springbootmongodb.dto;
 
 import backend.newssseuk.springbootmongodb.Article;
 import backend.newssseuk.springbootmongodb.ArticleRepository;
+import backend.newssseuk.springbootmongodb.redis.ArticleRedisEntity;
 import com.mongodb.lang.Nullable;
 import lombok.*;
 
@@ -22,7 +23,7 @@ public class ArticleResponseDto {
 
     private String category;
 
-    public ArticleResponseDto(Article article) {
+    public ArticleResponseDto(ArticleRedisEntity article) {
         this.title = article.getTitle();
         this.press = article.getPress();
         this.journalist = article.getJournalist();

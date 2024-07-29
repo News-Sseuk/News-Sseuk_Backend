@@ -4,6 +4,7 @@ import backend.newssseuk.domain.recommendedArticle.RecommendedArticle;
 import backend.newssseuk.domain.articleHashTag.ArticleHashTag;
 import backend.newssseuk.domain.common.BaseEntity;
 import backend.newssseuk.domain.userHistory.UserHistory;
+import backend.newssseuk.springbootmongodb.redis.ArticleRedisEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -34,8 +35,8 @@ public class Article {
     private UserHistory userHistory;
 
     // ArticleHelper를 통해 MongoDB 객체를 가져오는 메서드
-    public backend.newssseuk.springbootmongodb.Article getMongoEntity(ArticleHelper articleHelper) {
-        return articleHelper.getMongoEntityByNosqlId(this.nosqlId);
+    public ArticleRedisEntity getMongoEntity(ArticleHelper articleHelper) {
+        return articleHelper.getRedisEntityByNosqlId(this.nosqlId);
     }
     /*@ElementCollection
     private List<String> keywordList = new ArrayList<>();
