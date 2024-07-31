@@ -2,6 +2,7 @@ package backend.newssseuk.domain.recommendedArticle;
 
 import backend.newssseuk.domain.article.Article;
 import backend.newssseuk.domain.common.BaseEntity;
+import backend.newssseuk.domain.recommendedArticle.dto.RecommendedArticleUpdateDto;
 import backend.newssseuk.domain.user.User;
 import jakarta.persistence.*;
 import lombok.*;
@@ -24,5 +25,10 @@ public class RecommendedArticle extends BaseEntity {
     private User user;
 
     @OneToMany(mappedBy = "recommendedArticle", cascade = CascadeType.ALL)
-    List<Article> articleList = new ArrayList<>();
+    private List<Article> articleList = new ArrayList<>();
+
+    public void update(RecommendedArticleUpdateDto recommendedArticleUpdateDto){
+        if(recommendedArticleUpdateDto.getArticleList() != null)
+            this.articleList = recommendedArticleUpdateDto.getArticleList();
+    }
 }

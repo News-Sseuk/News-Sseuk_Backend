@@ -1,6 +1,7 @@
-package backend.newssseuk.domain.userHistory;
+package backend.newssseuk.domain.relatedArticle;
 
 import backend.newssseuk.domain.article.Article;
+import backend.newssseuk.domain.common.BaseEntity;
 import backend.newssseuk.domain.user.User;
 import jakarta.persistence.*;
 import lombok.*;
@@ -8,23 +9,20 @@ import lombok.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity(name="user_history")
+@Entity(name="related_article")
 @Getter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class UserHistory {
+public class RelatedArticle {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="user_id")
-    private User user;
-
-    @OneToMany(mappedBy = "userHistory", cascade = CascadeType.ALL)
-    List<Article> articleList = new ArrayList<>(); // 10개 저장
+    @JoinColumn(name="article_id")
+    private Article article;
 
     @ElementCollection
-    List<String> searchHistoryList = new ArrayList<>();
+    private List<Long> articleList = new ArrayList<>(); // article_id 저장
 }

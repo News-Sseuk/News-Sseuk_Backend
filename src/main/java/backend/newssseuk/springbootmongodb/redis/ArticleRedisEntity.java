@@ -15,7 +15,7 @@ import java.util.List;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-@RedisHash(value="article", timeToLive=86400) // 1일 단위로 캐싱
+@RedisHash(value="article")
 public class ArticleRedisEntity {
     @Id
     private String id;
