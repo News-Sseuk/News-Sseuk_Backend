@@ -26,5 +26,5 @@ public class UserHistory {
     List<Article> articleList = new ArrayList<>(); // 10개 저장
 
     @ElementCollection
-    List<String> searchHistoryList = new ArrayList<>();
+    List<String> searchHistoryList;
 }

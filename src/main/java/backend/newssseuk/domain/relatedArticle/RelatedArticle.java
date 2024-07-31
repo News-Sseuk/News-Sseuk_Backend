@@ -1,8 +1,6 @@
 package backend.newssseuk.domain.relatedArticle;
 
 import backend.newssseuk.domain.article.Article;
-import backend.newssseuk.domain.common.BaseEntity;
-import backend.newssseuk.domain.user.User;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -24,5 +22,5 @@ public class RelatedArticle {
     private Article article;
 
     @ElementCollection
-    private List<Long> articleList = new ArrayList<>(); // article_id 저장
+    private List<Long> articleList; // article_id 저장
 }

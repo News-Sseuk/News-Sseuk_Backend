@@ -75,7 +75,7 @@ public class ArticleService {
 
 
     @Transactional
-    @Cacheable(value = "Article", key = "#articleId", cacheManager = "cacheManager")
+    @Cacheable(key = "#id", cacheManager = "cacheManager")
     public ArticleRedisEntity cashingArticles(String id) {
         // mongodb에서 기사 데이터 가져옴
         Optional<Article> article = articleRepository.findById(id);

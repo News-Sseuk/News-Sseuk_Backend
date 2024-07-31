@@ -12,7 +12,6 @@ import org.springframework.stereotype.Component;
 public class ArticleHelper {
     private final ArticleRedisRepository articleRedisRepository;
 
-    // Todo : 매개변수 List<Article>로 변경 (mongodb Article임)
     public ArticleRedisEntity getRedisEntityByNosqlId(String nosqlId) {
         return articleRedisRepository.findById(nosqlId).orElse(null);
     }

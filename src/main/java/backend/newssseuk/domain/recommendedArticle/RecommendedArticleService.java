@@ -28,7 +28,7 @@ public class RecommendedArticleService {
     private final ArticleHelper articleHelper;
 
     @Transactional
-    @Cacheable(value = "RecommendedArticle", key = "#recommendedArticleId", cacheManager = "cacheManager")
+    @Cacheable(cacheNames = "RecommendedArticleByHistory", key = "#id", cacheManager = "cacheManager")
     public RecommendedArticleRedisEntity cashingPersonalRecommendedArticles(User user, List<Article> articleList){
         try {
             return recommendedArticleRedisRepository.save(RecommendedArticleRedisEntity.builder()
@@ -83,7 +83,6 @@ public class RecommendedArticleService {
         RecommendedArticleRedisEntity recommendedArticleRedisEntity = recommendedArticleRedisRepository.findById(user).orElse(null);
         if (recommendedArticleRedisEntity != null) {
             recommendedArticleResponseDto = new RecommendedArticleResponseDto(recommendedArticleRedisEntity);
-
         } else {
             List<Article> article_list = collectingPersonalRecommendedArticles(user);
             recommendedArticleResponseDto = new RecommendedArticleResponseDto(cashingPersonalRecommendedArticles(user, article_list));

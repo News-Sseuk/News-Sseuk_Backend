@@ -24,5 +24,5 @@ public class RecommendedArticleRedisEntity {
     @Indexed
     private User user;
 
-    private List<ArticleRedisEntity> articleList = new ArrayList<>(); // mongoDB Article
+    private List<ArticleRedisEntity> articleList; // mongoDB Article
 }
