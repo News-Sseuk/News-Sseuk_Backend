@@ -5,6 +5,9 @@ spring:
     url: jdbc:mysql://localhost:3306/news-sseuk?createDatabaseIfNotExist=TRUE&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
     username: root
     password: root
+    #url: jdbc:mysql://newsseuk-mysql.czgkwqiue0gp.ap-northeast-2.rds.amazonaws.com:3306/news-sseuk?createDatabaseIfNotExist=TRUE&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    #username: newsseuk
+    #password: hongikgradproject!aza!aza!
     driver-class-name: com.mysql.cj.jdbc.Driver
   data:
     mongodb:
