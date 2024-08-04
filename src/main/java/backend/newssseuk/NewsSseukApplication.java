@@ -14,9 +14,9 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import java.util.concurrent.Executor;
 
+@SpringBootApplication
 @EnableAsync
 @EnableScheduling
-@SpringBootApplication
 @EnableJpaAuditing
 @EnableCaching
 public class NewsSseukApplication implements AsyncConfigurer {
