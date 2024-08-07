@@ -24,11 +24,18 @@ public class RecommendedArticle extends BaseEntity {
     @JoinColumn(name="user_id")
     private User user;
 
-    @OneToMany(mappedBy = "recommendedArticle", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "recommendedArticle", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Article> articleList = new ArrayList<>();
 
     public void update(RecommendedArticleUpdateDto recommendedArticleUpdateDto){
         if(recommendedArticleUpdateDto.getArticleList() != null)
             this.articleList = recommendedArticleUpdateDto.getArticleList();
+    }
+
+    public void setArticleList(List<Article> articleSettingList){
+        this.articleList=articleSettingList;
+        for (Article article : articleSettingList){
+            article.setRecommendedArticle(this);
+        }
     }
 }

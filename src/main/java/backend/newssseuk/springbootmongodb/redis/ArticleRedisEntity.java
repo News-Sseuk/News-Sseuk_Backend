@@ -1,5 +1,6 @@
 package backend.newssseuk.springbootmongodb.redis;
 
+import backend.newssseuk.domain.article.Article;
 import backend.newssseuk.domain.enums.Category;
 import com.mongodb.lang.Nullable;
 import jakarta.persistence.Id;
@@ -32,5 +33,5 @@ public class ArticleRedisEntity {
     private String content;
 
     @Indexed
-    private Category category;
+    private String category;
 }

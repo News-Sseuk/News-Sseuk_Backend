@@ -1,6 +1,7 @@
 package backend.newssseuk.domain.recommendedArticle.redis;
 
 import backend.newssseuk.domain.user.User;
+import backend.newssseuk.springbootmongodb.dto.ArticleResponseDto;
 import backend.newssseuk.springbootmongodb.redis.ArticleRedisEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -22,7 +23,7 @@ public class RecommendedArticleRedisEntity {
     private Long id;
 
     @Indexed
-    private User user;
+    private Long userId;
 
-    private List<ArticleRedisEntity> articleList; // mongoDB Article
+    private List<ArticleResponseDto> articleList; // mongoDB Article
 }

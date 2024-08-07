@@ -1,12 +1,10 @@
 package backend.newssseuk.domain.relatedArticle;
 
+import backend.newssseuk.domain.relatedArticle.dto.RelatedArticleSaveDto;
 import backend.newssseuk.springbootmongodb.dto.ArticleResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -16,8 +14,13 @@ import java.util.List;
 @RequiredArgsConstructor
 public class RelatedArticleController {
     private final RelatedArticleService relatedArticleService;
-    @GetMapping("api/personalrecommend/{articleId}")
+    @GetMapping("api/personalrecommend/find/{articleId}")
     public List<ArticleResponseDto> findRelatedArticles(@PathVariable("articleId") Long articleId){
         return relatedArticleService.collectingRelatedArticles(articleId);
+    }
+
+    @PostMapping("api/personalrecommend/")
+    public void saveRelatedArticle(@RequestBody RelatedArticleSaveDto request){
+        relatedArticleService.addRelatedArticle(request.getArticleId(),request.getArticleList());
     }
 }

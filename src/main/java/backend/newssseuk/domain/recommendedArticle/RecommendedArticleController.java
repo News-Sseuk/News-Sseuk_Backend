@@ -7,10 +7,7 @@ import backend.newssseuk.springbootmongodb.dto.ArticleResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -23,9 +20,8 @@ public class RecommendedArticleController {
     private final UserRepository userRepository;
 
     @GetMapping("api/personalrecommend/{userId}")
-    public List<ArticleResponseDto> personalRecommendedArticles(@PathVariable("userId") Long userId){
+    public List<ArticleResponseDto> personalRecommendedArticles(@PathVariable("userId") Long userId) {
         User user = userRepository.findById(userId).orElse(null);
         return recommendedArticleService.findPersonalRecommendedArticles(user);
     }
-
 }

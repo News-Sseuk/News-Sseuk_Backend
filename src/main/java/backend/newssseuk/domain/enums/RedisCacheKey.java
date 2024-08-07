@@ -8,6 +8,7 @@ import lombok.Getter;
 public enum RedisCacheKey {
     RECOMMENDED("RecommendedArticleByContent"),
     PERSONAL_RECOMMENDED("RecommendedArticleByHistory");
+
     private final String type;
 
 }

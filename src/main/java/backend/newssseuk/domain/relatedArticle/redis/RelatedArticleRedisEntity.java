@@ -1,7 +1,6 @@
 package backend.newssseuk.domain.relatedArticle.redis;
 
-import backend.newssseuk.domain.article.Article;
-import backend.newssseuk.springbootmongodb.redis.ArticleRedisEntity;
+import backend.newssseuk.springbootmongodb.dto.ArticleResponseDto;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.redis.core.RedisHash;
@@ -21,7 +20,7 @@ public class RelatedArticleRedisEntity {
     private Long id;
 
     @Indexed
-    private Article article;
+    private Long articleId;
 
-    private List<ArticleRedisEntity> articleList; // mongoDB Article
+    private List<ArticleResponseDto> articleList; // mongoDB Article
 }

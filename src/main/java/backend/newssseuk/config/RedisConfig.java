@@ -19,9 +19,9 @@ import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 
-@EnableRedisRepositories
-@Configuration
 @EnableCaching
+@Configuration
+@EnableRedisRepositories
 @RequiredArgsConstructor
 public class RedisConfig {
 
@@ -33,7 +33,7 @@ public class RedisConfig {
         return new LettuceConnectionFactory(redisProperties.getHost(), redisProperties.getPort());
     }
 
-    @Bean
+    @Bean(name = "cacheManager")
     public RedisCacheManager cacheManager() {
         return RedisCacheManager
                 .RedisCacheManagerBuilder

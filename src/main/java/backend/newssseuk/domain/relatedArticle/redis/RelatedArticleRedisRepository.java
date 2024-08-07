@@ -4,5 +4,5 @@ import backend.newssseuk.domain.article.Article;
 import org.springframework.data.repository.CrudRepository;
 
 public interface RelatedArticleRedisRepository extends CrudRepository<RelatedArticleRedisEntity, Long> {
-    RelatedArticleRedisEntity findByArticle(Article article);
+    RelatedArticleRedisEntity findByArticleId(Long articleId);
 }

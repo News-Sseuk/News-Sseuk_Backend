@@ -28,6 +28,7 @@ public class JWTFilter extends OncePerRequestFilter {
             setErrorResponse(HttpStatus.UNAUTHORIZED, response, e, ErrorStatus.UNSUPPORTED_TOKEN);
         } catch (Exception e) {
             setErrorResponse(HttpStatus.UNAUTHORIZED, response, e, ErrorStatus.INVALID_TOKEN);
+            e.printStackTrace();
         }
     }
 

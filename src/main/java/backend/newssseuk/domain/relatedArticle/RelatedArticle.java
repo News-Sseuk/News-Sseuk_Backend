@@ -23,4 +23,9 @@ public class RelatedArticle {
 
     @ElementCollection
     private List<Long> articleList; // article_id 저장
+
+    public void setArticle(Article article){
+        this.article=article;
+        article.setRelatedArticle(this);
+    }
 }
