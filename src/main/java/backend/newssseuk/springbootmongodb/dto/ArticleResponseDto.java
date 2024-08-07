@@ -9,7 +9,10 @@ import lombok.*;
 import java.util.List;
 
 @Data
+@NoArgsConstructor
 public class ArticleResponseDto {
+    private String id;
+
     private String title;
 
     private String press;
@@ -24,11 +27,12 @@ public class ArticleResponseDto {
     private String category;
 
     public ArticleResponseDto(ArticleRedisEntity article) {
+        this.id = article.getId();
         this.title = article.getTitle();
         this.press = article.getPress();
         this.journalist = article.getJournalist();
         this.image = article.getImage();
         this.content = article.getContent();
-        this.category = article.getCategory().toString();
+        this.category = article.getCategory();
     }
 }

@@ -1,5 +1,6 @@
 package backend.newssseuk.springbootmongodb.redis;
 
+import backend.newssseuk.domain.article.Article;
 import backend.newssseuk.domain.enums.Category;
 import com.mongodb.lang.Nullable;
 import jakarta.persistence.Id;
@@ -15,7 +16,7 @@ import java.util.List;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-@RedisHash(value="article", timeToLive=86400) // 1일 단위로 캐싱
+@RedisHash(value="article")
 public class ArticleRedisEntity {
     @Id
     private String id;
@@ -32,5 +33,5 @@ public class ArticleRedisEntity {
     private String content;
 
     @Indexed
-    private Category category;
+    private String category;
 }

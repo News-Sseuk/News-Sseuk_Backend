@@ -1,14 +1,11 @@
-package backend.newssseuk.domain.recommendedArticle.redis;
+package backend.newssseuk.domain.relatedArticle.redis;
 
-import backend.newssseuk.domain.user.User;
 import backend.newssseuk.springbootmongodb.dto.ArticleResponseDto;
-import backend.newssseuk.springbootmongodb.redis.ArticleRedisEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.redis.core.RedisHash;
 import org.springframework.data.redis.core.index.Indexed;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Builder
@@ -17,13 +14,13 @@ import java.util.List;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-@RedisHash(value="recommended-article")
-public class RecommendedArticleRedisEntity {
+@RedisHash(value="related-article")
+public class RelatedArticleRedisEntity {
     @Id
     private Long id;
 
     @Indexed
-    private Long userId;
+    private Long articleId;
 
     private List<ArticleResponseDto> articleList; // mongoDB Article
 }

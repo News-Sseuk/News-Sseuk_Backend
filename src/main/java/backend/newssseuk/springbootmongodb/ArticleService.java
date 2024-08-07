@@ -3,6 +3,7 @@ package backend.newssseuk.springbootmongodb;
 import backend.newssseuk.domain.enums.Category;
 import backend.newssseuk.springbootmongodb.converter.CategoryConverter;
 import backend.newssseuk.springbootmongodb.dto.ArticleResponseDto;
+import backend.newssseuk.springbootmongodb.redis.ArticleRedisCachingService;
 import backend.newssseuk.springbootmongodb.redis.ArticleRedisEntity;
 import backend.newssseuk.springbootmongodb.redis.ArticleRedisRepository;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +28,7 @@ import java.util.*;
 @Transactional
 public class ArticleService {
 
-    private final ArticleRepository articleRepository;
+    private final ArticleRedisCachingService articleRedisCachingService;
     private final ArticleRedisRepository articleRedisRepository;
     private final CategoryConverter categoryConverter;
     private final EachArticleService eachArticleService;
@@ -74,27 +75,6 @@ public class ArticleService {
     }
 
 
-    @Transactional
-    @Cacheable(value = "Article", key = "#articleId", cacheManager = "cacheManager")
-    public ArticleRedisEntity cashingArticles(String id) {
-        // mongodb에서 기사 데이터 가져옴
-        Optional<Article> article = articleRepository.findById(id);
-        try {
-            return articleRedisRepository.save(ArticleRedisEntity.builder()
-                    .title(article.get().getTitle())
-                    .press(article.get().getPress())
-                    .journalist(article.get().getJournalist())
-                    .image(article.get().getImage())
-                    .content(article.get().getContent())
-                    .category(article.get().getCategory())
-                    .build());
-        }
-        catch (Exception e) {
-            throw new NoSuchElementException("해당 데이터가 없습니다.");
-        }
-    }
-
-
     public ArticleResponseDto findArticles(String id) {
         // redis에 있는 지 찾아보고
         // 등록 안되어있으면, mongodb에서 findById 해서 등록 (cashingArticles 함수 실행)
@@ -102,7 +82,7 @@ public class ArticleService {
         if (articleRedisEntity.isPresent()) {
             return new ArticleResponseDto(articleRedisEntity.get());
         } else {
-            ArticleRedisEntity cashed_article = cashingArticles(id);
+            ArticleRedisEntity cashed_article = articleRedisCachingService.cashingArticles(id);
             return new ArticleResponseDto(cashed_article);}
     }
 }
