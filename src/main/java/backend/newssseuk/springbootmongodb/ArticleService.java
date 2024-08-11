@@ -1,8 +1,9 @@
 package backend.newssseuk.springbootmongodb;
 
 import backend.newssseuk.domain.enums.Category;
-import backend.newssseuk.springbootmongodb.converter.CategoryConverter;
+import backend.newssseuk.domain.enums.converter.CategoryConverter;
 import backend.newssseuk.springbootmongodb.dto.ArticleResponseDto;
+import backend.newssseuk.springbootmongodb.dto.ArticleThumbnailDTO;
 import backend.newssseuk.springbootmongodb.redis.ArticleRedisCachingService;
 import backend.newssseuk.springbootmongodb.redis.ArticleRedisEntity;
 import backend.newssseuk.springbootmongodb.redis.ArticleRedisRepository;
@@ -30,6 +31,7 @@ public class ArticleService {
     private final CategoryConverter categoryConverter;
     private final EachArticleService eachArticleService;
     private final ThreadLocalService threadLocalService;
+    private final ArticleRepository articleRepository;
 
     WebDriver webDriver;
 
@@ -83,5 +85,22 @@ public class ArticleService {
         } else {
             ArticleRedisEntity cashed_article = articleRedisCachingService.cashingArticles(id);
             return new ArticleResponseDto(cashed_article);}
+    }
+
+    public List<ArticleThumbnailDTO> findArticleThumbnails(String categoryString) {
+        List<ArticleThumbnailDTO> articleThumbnailDTOList = new ArrayList<>();
+        Category category = categoryConverter.fromKrCategory(categoryString);
+        List<Article> articleList = articleRepository.findAllByCategory(category);
+        for(Article article : articleList) {
+            ArticleThumbnailDTO articleThumbnailDTO = ArticleThumbnailDTO.builder()
+                    .id(article.getId())
+                    .title(article.getTitle())
+                    .description((article.getContent().length() > 80) ? article.getContent().substring(0, 80) : article.getContent())
+                    .publishedDate(article.getPublishedDate())
+                    .image(article.getImage().isEmpty() ? null : article.getImage().get(0))
+                    .build();
+            articleThumbnailDTOList.add(articleThumbnailDTO);
+        }
+        return articleThumbnailDTOList;
     }
 }

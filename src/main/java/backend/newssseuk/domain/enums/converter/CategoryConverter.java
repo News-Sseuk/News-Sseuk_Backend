@@ -1,4 +1,4 @@
-package backend.newssseuk.springbootmongodb.converter;
+package backend.newssseuk.domain.enums.converter;
 
 import backend.newssseuk.domain.enums.Category;
 import org.springframework.stereotype.Component;

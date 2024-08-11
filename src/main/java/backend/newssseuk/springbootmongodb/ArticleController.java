@@ -1,18 +1,13 @@
 package backend.newssseuk.springbootmongodb;
 
-import backend.newssseuk.domain.enums.Category;
 import backend.newssseuk.springbootmongodb.dto.ArticleResponseDto;
+import backend.newssseuk.springbootmongodb.dto.ArticleThumbnailDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.openqa.selenium.WebElement;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.*;
 
-import org.slf4j.Logger;
-
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 
 @Slf4j
 @CrossOrigin
@@ -35,5 +30,10 @@ public class ArticleController {
     @GetMapping("redis/article/{id}")
     public ArticleResponseDto findByArticleId(@PathVariable("id") String id){
         return articleService.findArticles(id);
+    }
+
+    @GetMapping("/article/{category}")
+    public List<ArticleThumbnailDTO> getArticleThumbnail(@PathVariable("category") String category){
+        return articleService.findArticleThumbnails(category);
     }
 }
