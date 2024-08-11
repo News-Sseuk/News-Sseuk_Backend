@@ -9,13 +9,10 @@ import backend.newssseuk.springbootmongodb.redis.ArticleRedisRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -48,9 +45,11 @@ public class ArticleService {
 
         for (int i=1; i<=categoryList.size(); i++) {
             String category_xpath = String.format("//*[@id=\"ct_wrap\"]/div[2]/div[1]/div/ul/li[%d]/a", i);
-            String category_button_url = webDriver.findElement(By.xpath(category_xpath)).getAttribute("href");
-            String category_name = webDriver.findElement(By.xpath(category_xpath)).getText();
-            Category category = categoryConverter.fromKrCategory(category_name);
+            WebElement categoryElement = webDriver.findElement(By.xpath(category_xpath));
+            String category_button_url = categoryElement.getAttribute("href");
+            JavascriptExecutor js = (JavascriptExecutor) webDriver;
+            String categoryName = (String) js.executeScript("return arguments[0].textContent;", categoryElement);
+            Category category = categoryConverter.fromKrCategory(categoryName);
 
             webDriver.get(category_button_url);
 

@@ -10,6 +10,8 @@ import org.openqa.selenium.WebElement;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,7 +56,10 @@ public class EachArticleService {
             WebElement elementPress = webDriver.findElement(By.cssSelector(".media_end_head_top_logo_img"));
             WebElement elementContent = webDriver.findElement(By.cssSelector(".newsct_article"));
             List<WebElement> elementImage = webDriver.findElements(By.cssSelector(".nbd_a img"));
-
+            WebElement elementTime = webDriver.findElement(By.cssSelector("span.media_end_head_info_datestamp_time"));
+            String date = elementTime.getAttribute("data-date-time");
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            LocalDateTime dateTime = LocalDateTime.parse(date, formatter);
             List<String> imageList = new ArrayList<>();
             for (WebElement imageEl : elementImage) {
                 imageList.add(imageEl.getAttribute("src"));
@@ -70,6 +75,7 @@ public class EachArticleService {
                     .press(elementPress.getAttribute("alt"))
                     .content(elementContent.getText())
                     .image(imageList)
+                    .publishedDate(dateTime)
                     .build();
             Article savedArticle = articleRepository.save(article);
             backend.newssseuk.domain.article.Article jpaArticle = backend.newssseuk.domain.article.Article.builder()
