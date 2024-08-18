@@ -4,9 +4,11 @@ import backend.newssseuk.springbootmongodb.dto.ArticleResponseDto;
 import backend.newssseuk.springbootmongodb.dto.ArticleThumbnailDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
@@ -32,8 +34,9 @@ public class ArticleController {
         return articleService.findArticles(id);
     }
 
-    @GetMapping("/article/{category}")
-    public List<ArticleThumbnailDTO> getArticleThumbnail(@PathVariable("category") String category){
-        return articleService.findArticleThumbnails(category);
+    @GetMapping("/article/{category}/{cursor_time}")
+    public List<ArticleThumbnailDTO> getArticleThumbnail(@PathVariable("category") String category,
+                                                         @PathVariable("cursor_time") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime cursorTime){
+        return articleService.findArticleThumbnails(category, cursorTime);
     }
 }

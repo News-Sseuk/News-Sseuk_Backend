@@ -1,15 +1,16 @@
 package backend.newssseuk.domain.article;
 
+import backend.newssseuk.domain.enums.Category;
 import backend.newssseuk.domain.recommendedArticle.RecommendedArticle;
 import backend.newssseuk.domain.articleHashTag.ArticleHashTag;
-import backend.newssseuk.domain.common.BaseEntity;
 import backend.newssseuk.domain.relatedArticle.RelatedArticle;
-import backend.newssseuk.domain.user.User;
 import backend.newssseuk.domain.userHistory.UserHistory;
 import backend.newssseuk.springbootmongodb.redis.ArticleRedisEntity;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,6 +26,14 @@ public class Article {
     private Long id;
 
     private String nosqlId;
+
+    private Integer reliability;
+
+    @Enumerated(EnumType.STRING)
+    private Category category;
+
+    @CreatedDate
+    private LocalDateTime crawledTime;
 
     @OneToMany(mappedBy = "article", cascade = CascadeType.ALL)
     private List<ArticleHashTag> articleHashTagList = new ArrayList<>();

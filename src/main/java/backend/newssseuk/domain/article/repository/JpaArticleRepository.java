@@ -7,4 +7,6 @@ import java.util.Optional;
 
 public interface JpaArticleRepository extends JpaRepository<Article, Long> {
     Optional<Article> findById(Long articleId);
+
+    Optional<Article> findByNosqlId(String nosqlId);
 }

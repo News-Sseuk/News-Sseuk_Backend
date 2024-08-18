@@ -79,6 +79,8 @@ public class EachArticleService {
                     .build();
             Article savedArticle = articleRepository.save(article);
             backend.newssseuk.domain.article.Article jpaArticle = backend.newssseuk.domain.article.Article.builder()
+                    .category(category)
+                    .crawledTime(LocalDateTime.now())
                     .nosqlId(savedArticle.getId())
                     .build();
             jpaArticleRepository.save(jpaArticle);

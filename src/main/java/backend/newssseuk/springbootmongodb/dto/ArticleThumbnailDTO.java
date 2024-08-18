@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Builder
@@ -12,5 +13,7 @@ public class ArticleThumbnailDTO {
     private String title;
     private String description;
     private LocalDateTime publishedDate;
-    private String image;
+    private String category;
+    private List<String> hashTagList;
+    private Integer reliability;
 }

@@ -1,5 +1,8 @@
 package backend.newssseuk.springbootmongodb;
 
+import backend.newssseuk.domain.article.Article;
+import backend.newssseuk.domain.article.service.JpaArticleService;
+import backend.newssseuk.domain.articleHashTag.service.ArticleHashTagService;
 import backend.newssseuk.domain.enums.Category;
 import backend.newssseuk.domain.enums.converter.CategoryConverter;
 import backend.newssseuk.springbootmongodb.dto.ArticleResponseDto;
@@ -18,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Slf4j
@@ -32,6 +36,8 @@ public class ArticleService {
     private final EachArticleService eachArticleService;
     private final ThreadLocalService threadLocalService;
     private final ArticleRepository articleRepository;
+    private final ArticleHashTagService articleHashTagService;
+    private final JpaArticleService jpaArticleService;
 
     WebDriver webDriver;
 
@@ -87,19 +93,24 @@ public class ArticleService {
             return new ArticleResponseDto(cashed_article);}
     }
 
-    public List<ArticleThumbnailDTO> findArticleThumbnails(String categoryString) {
+    public List<ArticleThumbnailDTO> findArticleThumbnails(String categoryString, LocalDateTime cursorTime) {
         List<ArticleThumbnailDTO> articleThumbnailDTOList = new ArrayList<>();
         Category category = categoryConverter.fromKrCategory(categoryString);
-        List<Article> articleList = articleRepository.findAllByCategory(category);
-        for(Article article : articleList) {
-            ArticleThumbnailDTO articleThumbnailDTO = ArticleThumbnailDTO.builder()
-                    .id(article.getId())
-                    .title(article.getTitle())
-                    .description((article.getContent().length() > 80) ? article.getContent().substring(0, 80) : article.getContent())
-                    .publishedDate(article.getPublishedDate())
-                    .image(article.getImage().isEmpty() ? null : article.getImage().get(0))
-                    .build();
-            articleThumbnailDTOList.add(articleThumbnailDTO);
+        List<Article> jpaArticleList = jpaArticleService.findAllByCategoryOrderByDate(category, cursorTime);
+        for(Article jpaArticle : jpaArticleList) {
+            Optional<backend.newssseuk.springbootmongodb.Article> article = articleRepository.findById(jpaArticle.getNosqlId());
+            if (article.isPresent()) {
+                ArticleThumbnailDTO articleThumbnailDTO = ArticleThumbnailDTO.builder()
+                        .id(article.get().getId())
+                        .title(article.get().getTitle())
+                        .description((article.get().getContent().length() > 80) ? article.get().getContent().substring(0, 80) : article.get().getContent())
+                        .publishedDate(article.get().getPublishedDate())
+                        .category(jpaArticle.getCategory().getKorean())
+                        .hashTagList(articleHashTagService.getHashTagListByArticleId(jpaArticle.getId()))
+                        .reliability(jpaArticle.getReliability())
+                        .build();
+                articleThumbnailDTOList.add(articleThumbnailDTO);
+            }
         }
         return articleThumbnailDTOList;
     }
