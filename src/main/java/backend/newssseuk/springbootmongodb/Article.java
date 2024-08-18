@@ -2,13 +2,11 @@ package backend.newssseuk.springbootmongodb;
 
 import backend.newssseuk.domain.enums.Category;
 import com.mongodb.lang.Nullable;
-import jakarta.persistence.ElementCollection;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Document(collection = "Articles")
@@ -32,6 +30,8 @@ public class Article {
 
     private String content;
 
-    @ElementCollection
+    @Enumerated(EnumType.STRING)
     private Category category;
+
+    private LocalDateTime publishedDate;
 }

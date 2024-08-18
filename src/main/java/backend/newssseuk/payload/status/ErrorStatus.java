@@ -30,8 +30,11 @@ public enum ErrorStatus implements BaseErrorCode {
     //user errors
     USER_ALREADY_EXIST(HttpStatus.BAD_REQUEST, "USER4001", "User already exists"),
     USER_NOT_FOUND(HttpStatus.NOT_FOUND,"User4002","User not found"),
-    SNS_LOGIN_WRONG_INFORMATION(HttpStatus.BAD_REQUEST, "SNS4003", "SNS information you entered is not valid.");
+    SNS_LOGIN_WRONG_INFORMATION(HttpStatus.BAD_REQUEST, "SNS4003", "SNS information you entered is not valid."),
 
+    //article errors
+    ARTICLE_NOT_FOUND(HttpStatus.NOT_FOUND,"Article4002","Aricle not found"),
+    ;
 
     private final HttpStatus httpStatus;
     private final String code;

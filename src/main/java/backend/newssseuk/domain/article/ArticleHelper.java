@@ -3,7 +3,6 @@ package backend.newssseuk.domain.article;
 import backend.newssseuk.springbootmongodb.Article;
 import backend.newssseuk.springbootmongodb.ArticleRepository;
 import backend.newssseuk.springbootmongodb.redis.ArticleRedisEntity;
-import backend.newssseuk.springbootmongodb.redis.ArticleRedisRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
