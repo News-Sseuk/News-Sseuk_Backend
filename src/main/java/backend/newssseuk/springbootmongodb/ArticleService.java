@@ -35,7 +35,6 @@ public class ArticleService {
     private final CategoryConverter categoryConverter;
     private final EachArticleService eachArticleService;
     private final ThreadLocalService threadLocalService;
-    private final ArticleRepository articleRepository;
     private final ArticleHashTagService articleHashTagService;
     private final JpaArticleService jpaArticleService;
 
@@ -98,19 +97,17 @@ public class ArticleService {
         Category category = categoryConverter.fromKrCategory(categoryString);
         List<Article> jpaArticleList = jpaArticleService.findAllByCategoryOrderByDate(category, cursorTime);
         for(Article jpaArticle : jpaArticleList) {
-            Optional<backend.newssseuk.springbootmongodb.Article> article = articleRepository.findById(jpaArticle.getNosqlId());
-            if (article.isPresent()) {
-                ArticleThumbnailDTO articleThumbnailDTO = ArticleThumbnailDTO.builder()
-                        .id(article.get().getId())
-                        .title(article.get().getTitle())
-                        .description((article.get().getContent().length() > 80) ? article.get().getContent().substring(0, 80) : article.get().getContent())
-                        .publishedDate(article.get().getPublishedDate())
-                        .category(jpaArticle.getCategory().getKorean())
-                        .hashTagList(articleHashTagService.getHashTagListByArticleId(jpaArticle.getId()))
-                        .reliability(jpaArticle.getReliability())
-                        .build();
-                articleThumbnailDTOList.add(articleThumbnailDTO);
-            }
+            ArticleResponseDto articleDto = findArticles(jpaArticle.getNosqlId());
+            ArticleThumbnailDTO articleThumbnailDTO = ArticleThumbnailDTO.builder()
+                    .id(articleDto.getId())
+                    .title(articleDto.getTitle())
+                    .description((articleDto.getContent().length() > 80) ? articleDto.getContent().substring(0, 80) : articleDto.getContent())
+                    .publishedDate(jpaArticle.getCrawledTime())
+                    .category(jpaArticle.getCategory().getKorean())
+                    .hashTagList(articleHashTagService.getHashTagListByArticleId(jpaArticle.getId()))
+                    .reliability(jpaArticle.getReliability())
+                    .build();
+            articleThumbnailDTOList.add(articleThumbnailDTO);
         }
         return articleThumbnailDTOList;
     }
