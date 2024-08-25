@@ -4,9 +4,6 @@ import backend.newssseuk.domain.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Entity
 @Getter
 @Builder
@@ -17,6 +14,5 @@ public class TrendingKeywords extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ElementCollection
-    private List<String> trendingKeyWords = new ArrayList<>();
+    private String trendingKeyWord;
 }

@@ -19,13 +19,6 @@ import java.util.List;
 public class SearchController {
     private final SearchService searchService;
 
-    //지금 뜨는 키워드 표시
-    @GetMapping("/trending-keywords")
-    @Operation(summary = "검색창 화면 하단의 '지금 뜨는 뉴쓱' api입니다")
-    public ApiResponse<List<String>> getTrendingKeywords() {
-        return null;
-    }
-
     //회원 히스토리 기반 기사 추천 표시
     @GetMapping("/recommendings")
     @Operation(summary = "검색창 화면 하단의 '회원님을 위한 추천 기사 리스트 api입니다")
