@@ -1,5 +1,6 @@
 package backend.newssseuk.springbootmongodb;
 
+import backend.newssseuk.payload.ApiResponse;
 import backend.newssseuk.springbootmongodb.dto.ArticleResponseDto;
 import backend.newssseuk.springbootmongodb.dto.ArticleThumbnailDTO;
 import lombok.RequiredArgsConstructor;
@@ -30,13 +31,13 @@ public class ArticleController {
     }
 
     @GetMapping("redis/article/{id}")
-    public ArticleResponseDto findByArticleId(@PathVariable("id") String id){
-        return articleService.findArticles(id);
+    public ApiResponse<ArticleResponseDto> findByArticleId(@PathVariable("id") String id){
+        return ApiResponse.onSuccess(articleService.findArticles(id));
     }
 
     @GetMapping("/article/{category}/{cursor_time}")
-    public List<ArticleThumbnailDTO> getArticleThumbnail(@PathVariable("category") String category,
-                                                         @PathVariable("cursor_time") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime cursorTime){
-        return articleService.findArticleThumbnails(category, cursorTime);
+    public ApiResponse<List<ArticleThumbnailDTO>> getArticleThumbnail(@PathVariable("category") String category,
+                                                                     @PathVariable("cursor_time") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime cursorTime){
+        return ApiResponse.onSuccess(articleService.findArticleThumbnails(category, cursorTime));
     }
 }

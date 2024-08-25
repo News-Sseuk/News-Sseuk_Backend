@@ -93,9 +93,16 @@ public class ArticleService {
     }
 
     public List<ArticleThumbnailDTO> findArticleThumbnails(String categoryString, LocalDateTime cursorTime) {
-        List<ArticleThumbnailDTO> articleThumbnailDTOList = new ArrayList<>();
+        if(cursorTime == null) {
+            cursorTime = LocalDateTime.now();
+        }
         Category category = categoryConverter.fromKrCategory(categoryString);
         List<Article> jpaArticleList = jpaArticleService.findAllByCategoryOrderByDate(category, cursorTime);
+        return getArticleThumbnailsByJpa(jpaArticleList);
+    }
+
+    public List<ArticleThumbnailDTO> getArticleThumbnailsByJpa(List<Article> jpaArticleList) {
+        List<ArticleThumbnailDTO> articleThumbnailDTOList = new ArrayList<>();
         for(Article jpaArticle : jpaArticleList) {
             ArticleResponseDto articleDto = findArticles(jpaArticle.getNosqlId());
             ArticleThumbnailDTO articleThumbnailDTO = ArticleThumbnailDTO.builder()
@@ -111,4 +118,25 @@ public class ArticleService {
         }
         return articleThumbnailDTOList;
     }
+
+    public List<ArticleThumbnailDTO> getArticleThumbnailsByMongo(List<backend.newssseuk.springbootmongodb.Article> articleList) {
+        List<ArticleThumbnailDTO> articleThumbnailDTOList = new ArrayList<>();
+        for(backend.newssseuk.springbootmongodb.Article article : articleList) {
+            Article jpaArticle = jpaArticleService.findByMongoId(article.getId());
+            ArticleResponseDto articleDto = findArticles(article.getId());
+            ArticleThumbnailDTO articleThumbnailDTO = ArticleThumbnailDTO.builder()
+                    .id(articleDto.getId())
+                    .title(articleDto.getTitle())
+                    .description((articleDto.getContent().length() > 80) ? articleDto.getContent().substring(0, 80) : articleDto.getContent())
+                    .publishedDate(article.getPublishedDate())
+                    .category(article.getCategory().getKorean())
+                    .hashTagList(articleHashTagService.getHashTagListByArticleId(jpaArticle.getId()))
+                    .reliability(jpaArticle.getReliability())
+                    .build();
+            articleThumbnailDTOList.add(articleThumbnailDTO);
+        }
+        return articleThumbnailDTOList;
+    }
+
+
 }
