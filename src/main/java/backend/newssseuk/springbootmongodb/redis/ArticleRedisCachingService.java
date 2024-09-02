@@ -8,6 +8,8 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -24,6 +26,7 @@ public class ArticleRedisCachingService {
         // mongodb에서 기사 데이터 가져옴
         Optional<Article> article = articleRepository.findById(id);
         backend.newssseuk.domain.article.Article jpaArticle = jpaArticleService.findByMongoId(id);
+
         try {
             return articleRedisRepository.save(ArticleRedisEntity.builder()
                     .title(article.get().getTitle())
@@ -32,6 +35,7 @@ public class ArticleRedisCachingService {
                     .image(article.get().getImage())
                     .content(article.get().getContent())
                     .category(article.get().getCategory().toString())
+                    .publishedDate(article.get().getPublishedDate().format(DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm")))    // yyyy.MM.dd HH:mm 형식으로 변경하기
                     .hashTagList(jpaArticle.getArticleHashTagList())
                     .reliability(jpaArticle.getReliability())
                     .summary(jpaArticle.getSummary())
