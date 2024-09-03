@@ -1,7 +1,9 @@
 package backend.newssseuk.springbootmongodb.dto;
 
+import backend.newssseuk.domain.articleHashTag.ArticleHashTag;
 import backend.newssseuk.springbootmongodb.redis.ArticleRedisEntity;
 import com.mongodb.lang.Nullable;
+import jakarta.persistence.ElementCollection;
 import lombok.*;
 
 import java.util.List;
@@ -24,6 +26,14 @@ public class ArticleResponseDto {
 
     private String category;
 
+    private List<ArticleHashTag> hashTagList;
+
+    private Integer reliability;
+
+    private String summary;
+
+    private String publishedDate;
+
     public ArticleResponseDto(ArticleRedisEntity article) {
         this.id = article.getId();
         this.title = article.getTitle();
@@ -32,5 +42,9 @@ public class ArticleResponseDto {
         this.image = article.getImage();
         this.content = article.getContent();
         this.category = article.getCategory();
+        this.hashTagList = article.getHashTagList();
+        this.reliability = article.getReliability();
+        this.summary = article.getSummary();
+        this.publishedDate = article.getPublishedDate();
     }
 }

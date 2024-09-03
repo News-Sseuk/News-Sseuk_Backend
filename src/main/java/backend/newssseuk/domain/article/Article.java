@@ -32,6 +32,8 @@ public class Article {
     @Enumerated(EnumType.STRING)
     private Category category;
 
+    private String summary;
+
     @CreatedDate
     private LocalDateTime crawledTime;
 

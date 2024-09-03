@@ -2,6 +2,8 @@ package backend.newssseuk.domain.articleReport;
 
 import backend.newssseuk.domain.article.Article;
 import backend.newssseuk.domain.common.BaseEntity;
+import backend.newssseuk.domain.enums.Category;
+import backend.newssseuk.domain.enums.ReportingReason;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -19,6 +21,6 @@ public class ArticleReport extends BaseEntity {
     @JoinColumn(name="article_id")
     private Article article;
 
-    //ToDo Enum 처리 할건지 결정 후
-    private String reportedReason;
+    @Enumerated(EnumType.STRING)
+    private ReportingReason reason;
 }

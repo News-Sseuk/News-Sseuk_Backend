@@ -4,7 +4,7 @@ spring:
   datasource:
     url: jdbc:mysql://localhost:3306/news-sseuk?createDatabaseIfNotExist=TRUE&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
     username: root
-    password: root
+    password: dlrkgus1^^
     #url: jdbc:mysql://newsseuk-mysql.czgkwqiue0gp.ap-northeast-2.rds.amazonaws.com:3306/news-sseuk?createDatabaseIfNotExist=TRUE&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
     #username: newsseuk
     #password: hongikgradproject!aza!aza!
