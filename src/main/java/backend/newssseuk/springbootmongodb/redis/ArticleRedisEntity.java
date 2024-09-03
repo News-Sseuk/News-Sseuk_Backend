@@ -42,4 +42,6 @@ public class ArticleRedisEntity {
     private Integer reliability;
 
     private String summary;
+
+    private String publishedDate;
 }
