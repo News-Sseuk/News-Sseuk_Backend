@@ -1,7 +1,5 @@
 package backend.newssseuk.domain.recommendedArticle.redis;
 
-import backend.newssseuk.domain.article.Article;
-import backend.newssseuk.domain.article.ArticleHelper;
 import backend.newssseuk.domain.user.User;
 import backend.newssseuk.springbootmongodb.dto.ArticleResponseDto;
 import backend.newssseuk.springbootmongodb.redis.ArticleRedisEntity;
@@ -13,7 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
-
 
 @Service
 @RequiredArgsConstructor

@@ -29,9 +29,7 @@ public class SearchService {
     public List<ArticleThumbnailDTO> searchByKeyword(LocalDateTime cursorTime,String keyword, String onOff, String sort) {
         Pageable pageable = PageRequest.of(0, 20);
         List<Article> articleList = articleRepository.findByContentContainingAndPublishedDateLessThanOrderByPublishedDateDesc(keyword, cursorTime, pageable);
-
         boolean isJpaRequired = onOff.toLowerCase(Locale.ROOT).equals("on");
-        boolean isSortingRequired = !sort.toLowerCase(Locale.ROOT).equals("latest");
 
         Stream<backend.newssseuk.domain.article.Article> articleStream = articleList.stream()
                 .map(article -> jpaArticleService.findByMongoId(article.getId()));
@@ -40,7 +38,7 @@ public class SearchService {
             articleStream = articleStream.filter(article -> article.getReliability() > 60);
         }
 
-        if (isSortingRequired) {
+        if (!sort.toLowerCase(Locale.ROOT).equals("latest")) {
             articleStream = articleStream.sorted(Comparator.comparingInt(backend.newssseuk.domain.article.Article::getReliability));
         }
 
