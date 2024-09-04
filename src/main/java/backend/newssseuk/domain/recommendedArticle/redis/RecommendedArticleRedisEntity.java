@@ -1,14 +1,11 @@
 package backend.newssseuk.domain.recommendedArticle.redis;
 
-import backend.newssseuk.domain.user.User;
 import backend.newssseuk.springbootmongodb.dto.ArticleResponseDto;
-import backend.newssseuk.springbootmongodb.redis.ArticleRedisEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.redis.core.RedisHash;
 import org.springframework.data.redis.core.index.Indexed;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Builder
