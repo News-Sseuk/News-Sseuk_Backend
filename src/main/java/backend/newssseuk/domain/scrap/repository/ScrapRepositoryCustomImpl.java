@@ -19,7 +19,7 @@ public class ScrapRepositoryCustomImpl implements ScrapRepositoryCustom{
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public List<Article> getUserArticleByCategory(User user, Category category, Pageable pageable, Long lastArticleId){
+    public List<Article> getUserArticleByCategory(User user, Category category, Long lastArticleId){
         QScrap qScrap = QScrap.scrap;
         return jpaQueryFactory
                 .select(qScrap.article)
@@ -30,7 +30,7 @@ public class ScrapRepositoryCustomImpl implements ScrapRepositoryCustom{
                                 .and(getLastArticleIdCondition(qScrap, lastArticleId))
                 )
                 .orderBy(qScrap.article.id.asc())  // 최신순 정렬
-                .limit(pageable.getPageSize()) // 페이지당 몇개의 데이터를 보여줄껀지
+                .limit(3) // 페이지당 몇개의 데이터를 보여줄껀지
                 .fetch();
     }
 

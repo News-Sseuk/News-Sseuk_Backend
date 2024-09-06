@@ -37,13 +37,13 @@ public class ScrapService {
         return article.getCategory().getKorean();
     }
 
-    public ScrapResponseDTO getScrapArticlesByUser(User user, Category category, Pageable pageable, Long lastArticleId){
-        List<Article> article_list =  scrapRepository.getUserArticleByCategory(user, category, pageable, lastArticleId);
+    public ScrapResponseDTO getScrapArticlesByUser(User user, Category category, Long lastArticleId){
+        List<Article> article_list =  scrapRepository.getUserArticleByCategory(user, category, lastArticleId);
         List<ArticleThumbnailDTO> thumbnailDTOS = articleService.getArticleThumbnailsByJpa(article_list);
 
         boolean hasNext = true;
         // 조회한 결과 개수가 요청한 페이지 사이즈보다 작을 경우, next = false
-        if (article_list.size() < pageable.getPageSize()) {
+        if (article_list.size() < 3) {
             hasNext = false;
         }
 
