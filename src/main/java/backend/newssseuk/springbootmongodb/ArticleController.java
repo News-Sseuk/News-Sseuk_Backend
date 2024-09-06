@@ -23,11 +23,7 @@ public class ArticleController {
     @Scheduled(cron = "0 0/30 * * * *", zone = "Asia/Seoul") // 30분마다 실행 (참고:https://dev-coco.tistory.com/176)
     @GetMapping("api/crawling")
     public void crawling(){
-        for (int i=1; i<=6; i++) {
-            String url = String.format("https://news.naver.com/section/%d", 99 + i);
-            articleService.getCrawlingInfos(url);
-            log.trace("--> 카테고리 {}번 실행 중", 99+i);
-        }
+        articleService.getCrawlingInfos();
     }
 
     @GetMapping("redis/article/{id}")

@@ -1,5 +1,6 @@
 package backend.newssseuk.springbootmongodb;
 
+import backend.newssseuk.config.ArticlesConfig;
 import backend.newssseuk.domain.article.Article;
 import backend.newssseuk.domain.article.service.JpaArticleService;
 import backend.newssseuk.domain.articleHashTag.service.ArticleHashTagService;
@@ -13,7 +14,6 @@ import backend.newssseuk.springbootmongodb.redis.ArticleRedisRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -37,46 +37,55 @@ public class ArticleService {
     private final ThreadLocalService threadLocalService;
     private final ArticleHashTagService articleHashTagService;
     private final JpaArticleService jpaArticleService;
-
+    private final ArticlesConfig articlesConfig;
     WebDriver webDriver;
 
-    public void getCrawlingInfos(String url) {
+    public void getCrawlingInfos() {
+        List<String> urls = articlesConfig.getUrls();
+        // aws의 t3micro 서버로 인한 카테고리별 순차 진행
+        for (String url : urls) {
+            crawlingByCategory(url);
+        }
+    }
+
+    private void crawlingByCategory(String url) {
+        int i=1;
+        int div=1;
         webDriver = threadLocalService.getDriver();
 
         webDriver.get(url);
         WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(60));
         wait.withTimeout(Duration.ofSeconds(5));  //5초 대기
+        String categoryName = webDriver.findElement(By.xpath("//*[@id=\"newsct\"]/div[1]/div[1]/h3")).getAccessibleName();
+        Category category = categoryConverter.fromKrCategory(categoryName);
 
-        List<WebElement> categoryList = webDriver.findElements(By.cssSelector("#ct_wrap > div.ct_scroll_wrapper > div.column0 > div > ul > li > a"));
+        List<String> urlList = new ArrayList<>();
 
-
-        for (int i=1; i<=categoryList.size(); i++) {
-            String category_xpath = String.format("//*[@id=\"ct_wrap\"]/div[2]/div[1]/div/ul/li[%d]/a", i);
-            WebElement categoryElement = webDriver.findElement(By.xpath(category_xpath));
-            String category_button_url = categoryElement.getAttribute("href");
-            JavascriptExecutor js = (JavascriptExecutor) webDriver;
-            String categoryName = (String) js.executeScript("return arguments[0].textContent;", categoryElement);
-            Category category = categoryConverter.fromKrCategory(categoryName);
-
-            webDriver.get(category_button_url);
-
-            List<WebElement> articleElementList = webDriver.findElements(By.cssSelector(".sa_text"));
-            List<String> urlList = new ArrayList<>();
-
-            // 기사들 url 수집
-            for (WebElement articleEl : articleElementList) {
-                WebElement timeElement = articleEl.findElement(By.cssSelector(".sa_text_datetime b"));
-                String timeText = timeElement.getText();
-                int minutesAgo = Integer.parseInt(timeText.replaceAll("[^0-9]", ""));
-                if (minutesAgo > 30) {
-                    continue;
-                }
-                urlList.add(articleEl.findElement(By.cssSelector(".sa_text_title")).getAttribute("href"));
+        // 기사들 url 수집
+        while(true) {
+            if (i > 6) {
+                i = 1;
+                div++;
             }
-            eachArticleService.getEachArticles(category, urlList);
-            //디버깅
-            System.out.println(category.getKorean());
+
+            WebElement timeElement = null;
+            try {
+                timeElement = webDriver.findElement(By.xpath(String.format("//*[@id=\"newsct\"]/div[2]/div/div[1]/div[%d]/ul/li[%d]/div/div/div[2]/div[2]/div[1]/div[2]/b",div , i)));
+            } catch (Exception e) {
+                timeElement = webDriver.findElement(By.xpath(String.format("//*[@id=\"newsct\"]/div[2]/div/div[1]/div[%d]/ul/li[%d]/div/div/div/div[2]/div[1]/div[2]/b",div , i)));
+            }
+            String timeText = timeElement.getText();
+            int minutesAgo = Integer.parseInt(timeText.replaceAll("[^0-9]", ""));
+            if (minutesAgo > 30 || timeText.substring(timeText.length() - 3).equals("시간전")) {
+                break;
+            } else {
+                urlList.add(webDriver.findElement(By.xpath(String.format("//*[@id=\"newsct\"]/div[2]/div/div[1]/div[%d]/ul/li[%d]/div/div/div[2]/a",div ,i))).getAttribute("href"));
+                i++;
+                //디버깅  //*[@id="newsct"]/div[2]/div/div[1]/div[1]/ul/li[4]/div/div/div/div[2]/div[1]/div[2]/b
+                System.out.println(category.getKorean());
+            }
         }
+        eachArticleService.getEachArticles(category, urlList);
         threadLocalService.quitDriver();
     }
 
