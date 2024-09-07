@@ -2,18 +2,18 @@ spring:
   application:
     name: News-Sseuk
   datasource:
-    url: jdbc:mysql://localhost:3306/news-sseuk?createDatabaseIfNotExist=TRUE&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
-    username: root
-    password: dlrkgus1^^
-    #url: jdbc:mysql://newsseuk-mysql.czgkwqiue0gp.ap-northeast-2.rds.amazonaws.com:3306/news-sseuk?createDatabaseIfNotExist=TRUE&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
-    #username: newsseuk
-    #password: hongikgradproject!aza!aza!
+    #url: jdbc:mysql://localhost:3306/news-sseuk?createDatabaseIfNotExist=TRUE&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    #username: root
+    #password: dlrkgus1^^
+    url: ${MYSQL_URL}
+    username: ${MYSQL_USERNAME}
+    password: ${MYSQL_PW}
     driver-class-name: com.mysql.cj.jdbc.Driver
   data:
     mongodb:
       uri: ${MONGO_LOCAL}
     redis:
-      host: localhost
+      host: ${REDIS_HOST}
       port: 6379
   jpa:
     open-in-view: false
