@@ -14,6 +14,14 @@ public class ThreadLocalService {
     public WebDriver getDriver(){
         if (webDriver.get() == null) {
             System.setProperty("webdriver.chrome.driver", chromeDriverPath);
+
+            //성능용
+            ChromeOptions options = new ChromeOptions();
+            options.addArguments("--headless");
+            options.addArguments("--no-sandbox");
+            options.addArguments("--disable-dev-shm-usage");
+            options.addArguments("--disable-gpu");
+            
             webDriver.set(new ChromeDriver());
         }
         return webDriver.get();
