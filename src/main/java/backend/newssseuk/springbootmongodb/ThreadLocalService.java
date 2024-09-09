@@ -2,6 +2,7 @@ package backend.newssseuk.springbootmongodb;
 
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -18,9 +19,6 @@ public class ThreadLocalService {
             //성능용
             ChromeOptions options = new ChromeOptions();
             options.addArguments("--headless");
-            options.addArguments("--no-sandbox");
-            options.addArguments("--disable-dev-shm-usage");
-            options.addArguments("--disable-gpu");
             
             webDriver.set(new ChromeDriver());
         }
