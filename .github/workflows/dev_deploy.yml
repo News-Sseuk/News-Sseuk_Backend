@@ -23,9 +23,6 @@ jobs:
           java-version: 17 # (5).자바 설치
           distribution: 'adopt'
 
-      - name: Install Chrome
-        run: sudo apt-get install -y google-chrome-stable
-
       - name: Download and Install ChromeDriver
         run: |
           CHROME_DRIVER_VERSION=$(curl -sS chromedriver.storage.googleapis.com/LATEST_RELEASE) # 최신 버전 자동 검색
@@ -33,6 +30,17 @@ jobs:
           unzip chromedriver_linux64.zip
           sudo mv chromedriver /usr/local/bin/
           sudo chmod +x /usr/local/bin/chromedriver
+
+      - name: Install Chrome
+        run: |
+          CHROME_VERSION=$(curl -sS https://chromedriver.storage.googleapis.com/${CHROME_DRIVER_VERSION}/notes.txt | grep -oP '(?<=Chrome Version: )\d+\.\d+\.\d+\.\d+')            
+          wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+          sudo apt-get install -y ./google-chrome-stable_current_amd64.deb
+
+      - name: Verify Chrome and ChromeDriver installation
+        run: |
+          google-chrome --version
+          chromedriver --version
 
       - name: Verify ChromeDriver installation
         run: chromedriver --version
