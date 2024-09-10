@@ -19,7 +19,11 @@ public class ThreadLocalService {
             //성능용
             ChromeOptions options = new ChromeOptions();
             options.addArguments("--headless");
-            
+            options.addArguments("--no-sandbox");
+            options.addArguments("--disable-dev-shm-usage");
+            options.addArguments("--disable-gpu");
+            options.addArguments("--remote-allow-origins=*");
+
             webDriver.set(new ChromeDriver());
         }
         return webDriver.get();
