@@ -6,7 +6,6 @@ import backend.newssseuk.domain.user.web.request.SignUpDto;
 import backend.newssseuk.domain.user.web.request.UpdateUserDto;
 import backend.newssseuk.domain.user.web.response.SignInResponseDto;
 import backend.newssseuk.domain.user.web.response.TokenResponse;
-import backend.newssseuk.domain.userAttendance.service.UserAttendanceService;
 import backend.newssseuk.payload.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +24,12 @@ public class UserController {
     public ApiResponse<Void> joinProcess(@RequestBody SignUpDto signUpDto) {
         userService.createAccount(signUpDto);
         return ApiResponse.onCreate();
+    }
+
+    @GetMapping("/user/email/{email}")
+    @Operation(summary = "이메일 중복 체크")
+    public ApiResponse<Boolean> emailDuplication(@PathVariable("email") String email) {
+        return ApiResponse.onSuccess(!userService.checkDuplicate(email));
     }
 
     @PostMapping("/user/signin")

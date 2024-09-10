@@ -35,12 +35,16 @@ public class UserService {
     private final RefreshTokenService refreshTokenService;
     private final RefreshTokenRepository refreshTokenRepository;
 
+    public Boolean checkDuplicate(String email) {
+        return userRepository.existsByEmail(email);
+    }
+
     public void createAccount(SignUpDto signUpDto) {
         String name = signUpDto.getName();
         String email = signUpDto.getEmail();
         String password = signUpDto.getPassword();
 
-        Boolean isExist = userRepository.existsByEmail(email);
+        Boolean isExist = checkDuplicate(email);
 
         if (isExist) {
             throw new GeneralException(ErrorStatus.USER_ALREADY_EXIST, "이미 가입된 회원입니다.");
