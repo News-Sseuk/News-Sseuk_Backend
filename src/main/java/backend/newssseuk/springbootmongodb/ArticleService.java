@@ -76,12 +76,15 @@ public class ArticleService {
             }
             String timeText = timeElement.getText();
             int minutesAgo = Integer.parseInt(timeText.replaceAll("[^0-9]", ""));
-            if (minutesAgo > 30 || timeText.substring(timeText.length() - 3).equals("시간전")) {
+            if (minutesAgo > 30 || timeText.endsWith("시간전")) {
                 break;
             } else {
-                urlList.add(webDriver.findElement(By.xpath(String.format("//*[@id=\"newsct\"]/div[2]/div/div[1]/div[%d]/ul/li[%d]/div/div/div[2]/a",div ,i))).getAttribute("href"));
+                try {
+                    urlList.add(webDriver.findElement(By.xpath(String.format("//*[@id=\"newsct\"]/div[2]/div/div[1]/div[%d]/ul/li[%d]/div/div/div[2]/a",div ,i))).getAttribute("href"));
+                } catch (Exception e) {
+                    urlList.add(webDriver.findElement(By.xpath(String.format("//*[@id=\"newsct\"]/div[2]/div/div[1]/div[%d]/ul/li[%d]/div/div/div/a",div,i))).getAttribute("href"));
+                }
                 i++;
-                //디버깅  //*[@id="newsct"]/div[2]/div/div[1]/div[1]/ul/li[4]/div/div/div/div[2]/div[1]/div[2]/b
                 System.out.println(category.getKorean());
             }
         }
