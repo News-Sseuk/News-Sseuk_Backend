@@ -62,7 +62,7 @@ public class ArticleService {
         List<String> urlList = new ArrayList<>();
 
         // 기사들 url 수집
-        while(true) {
+        while(div < 7) {
             if (i > 6) {
                 i = 1;
                 div++;
@@ -76,7 +76,7 @@ public class ArticleService {
             }
             String timeText = timeElement.getText();
             int minutesAgo = Integer.parseInt(timeText.replaceAll("[^0-9]", ""));
-            if (minutesAgo > 30 || timeText.endsWith("시간전")) {
+            if (minutesAgo > 10 || timeText.endsWith("시간전")) {
                 break;
             } else {
                 try {
