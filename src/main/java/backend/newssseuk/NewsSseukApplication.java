@@ -28,8 +28,8 @@ public class NewsSseukApplication implements AsyncConfigurer {
     @Bean(name="executor")
     public Executor taskExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(6); // 스레드 개수 6개로 지정
-        executor.setMaxPoolSize(6);
+        executor.setCorePoolSize(2); // 스레드 개수 2개로 지정
+        executor.setMaxPoolSize(2);
         executor.setQueueCapacity(500);
         executor.initialize();
         return executor;
