@@ -20,7 +20,7 @@ public class ArticleController {
     private final ArticleService articleService;
 
     // 상위 카테고리 숫자의 범위 : 100 ~ 105
-    @Scheduled(cron = "0 0/10 * * * *", zone = "Asia/Seoul") // 30분마다 실행 (참고:https://dev-coco.tistory.com/176)
+    @Scheduled(cron = "0 0/10 * * * *", zone = "Asia/Seoul") // 10분마다 실행 (참고:https://dev-coco.tistory.com/176)
     @GetMapping("api/crawling")
     public void crawling(){
         articleService.getCrawlingInfos();
