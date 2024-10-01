@@ -1,5 +1,7 @@
 package backend.newssseuk.domain.user.web;
 
+import backend.newssseuk.config.auth.AuthUser;
+import backend.newssseuk.domain.user.User;
 import backend.newssseuk.domain.user.service.UserService;
 import backend.newssseuk.domain.user.web.request.SignInDto;
 import backend.newssseuk.domain.user.web.request.SignUpDto;
@@ -51,10 +53,10 @@ public class UserController {
         return ApiResponse.onSuccess();
     }
 
-    @PatchMapping(value = "/mypage/{userId}/setting", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
+    @PatchMapping(value = "/mypage/setting", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
     @Operation(summary = "mypage에서 개인정보 수정 화면")
-    public ApiResponse<Void> updateUserInfo(@PathVariable(name = "userId") Long userId, @RequestBody UpdateUserDto updateUserDto) {
-        userService.updateUser(userId, updateUserDto);
+    public ApiResponse<Void> updateUserInfo(@RequestBody UpdateUserDto updateUserDto, @AuthUser User user) {
+        userService.updateUser(user, updateUserDto);
         return ApiResponse.onSuccess();
     }
 }

@@ -96,12 +96,8 @@ public class UserService {
                 .build();
     }
 
-    public void updateUser(Long userId, UpdateUserDto updateUserDto) {
-        Optional<User> user = userRepository.findById(userId);
-        if (user.isEmpty()) {
-            throw new GeneralException(ErrorStatus.USER_NOT_FOUND);
-        }
-        user.get().update(updateUserDto.getName(),updateUserDto.getEmail());
+    public void updateUser(User user, UpdateUserDto updateUserDto) {
+        user.update(updateUserDto.getName(),updateUserDto.getEmail());
     }
 
     public User findUserById(Long userId) {
