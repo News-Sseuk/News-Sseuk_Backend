@@ -6,13 +6,15 @@ import backend.newssseuk.domain.user.service.UserService;
 import backend.newssseuk.domain.user.web.request.SignInDto;
 import backend.newssseuk.domain.user.web.request.SignUpDto;
 import backend.newssseuk.domain.user.web.request.UpdateUserDto;
+import backend.newssseuk.domain.user.web.response.MyPageDto;
 import backend.newssseuk.domain.user.web.response.SignInResponseDto;
 import backend.newssseuk.domain.user.web.response.TokenResponse;
 import backend.newssseuk.payload.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Set;
 
 @CrossOrigin
 @RestController
@@ -53,7 +55,19 @@ public class UserController {
         return ApiResponse.onSuccess();
     }
 
-    @PatchMapping(value = "/mypage/setting", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_VALUE})
+    @GetMapping("/mypage")
+    @Operation(summary = "마이페이지 데이터 제공 api")
+    public ApiResponse<MyPageDto> getMypage(@AuthUser User user) {
+        return ApiResponse.onSuccess(userService.getMyPageInfo(user));
+    }
+
+    @GetMapping("/myPrefers")
+    @Operation(summary = "회원의 관심 카테고리 제공 API")
+    public ApiResponse<Set<String>> getPreferCategory(@AuthUser User user) {
+        return ApiResponse.onSuccess(userService.getPreferCategory(user));
+    }
+
+    @PatchMapping(value = "/mypage/setting")
     @Operation(summary = "mypage에서 개인정보 수정 화면")
     public ApiResponse<Void> updateUserInfo(@RequestBody UpdateUserDto updateUserDto, @AuthUser User user) {
         userService.updateUser(user, updateUserDto);

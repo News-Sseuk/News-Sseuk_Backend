@@ -5,6 +5,8 @@ import backend.newssseuk.domain.user.User;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.YearMonth;
+
 @Entity
 @Getter
 @Builder
@@ -19,8 +21,8 @@ public class UserAttendance extends BaseEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
-    //YY-MM까지 저장
-    private String attendanceDate;
+    @Column(nullable = false)
+    private YearMonth attendanceDate;
 
     //각 월별 출석 일수 추가
     private Integer attendance;

@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.Set;
+
 @Builder
 @Getter
 @NoArgsConstructor
@@ -15,5 +17,5 @@ public class UpdateUserDto {
     String name;
 
     @NotNull
-    String email;
+    Set<String> preferCategory;
 }
