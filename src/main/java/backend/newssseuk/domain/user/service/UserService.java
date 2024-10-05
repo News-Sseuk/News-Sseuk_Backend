@@ -1,5 +1,8 @@
 package backend.newssseuk.domain.user.service;
 
+import backend.newssseuk.domain.enums.Category;
+import backend.newssseuk.domain.enums.converter.CategoryConverter;
+import backend.newssseuk.domain.enums.converter.GradeConverter;
 import backend.newssseuk.domain.refreshToken.RefreshToken;
 import backend.newssseuk.domain.refreshToken.repository.RefreshTokenRepository;
 import backend.newssseuk.domain.refreshToken.service.RefreshTokenService;
@@ -10,8 +13,10 @@ import backend.newssseuk.domain.user.web.response.JwtToken;
 import backend.newssseuk.domain.user.repository.UserRepository;
 import backend.newssseuk.domain.user.web.request.SignInDto;
 import backend.newssseuk.domain.user.web.request.SignUpDto;
+import backend.newssseuk.domain.user.web.response.MyPageDto;
 import backend.newssseuk.domain.user.web.response.SignInResponseDto;
 import backend.newssseuk.domain.user.web.response.TokenResponse;
+import backend.newssseuk.domain.userAttendance.service.UserAttendanceService;
 import backend.newssseuk.payload.exception.GeneralException;
 import backend.newssseuk.payload.status.ErrorStatus;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +26,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
+import java.time.YearMonth;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -34,6 +41,9 @@ public class UserService {
     private final JWTUtil jwtUtil;
     private final RefreshTokenService refreshTokenService;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final CategoryConverter categoryConverter;
+    private final UserAttendanceService userAttendanceService;
+    private final GradeConverter gradeConverter;
 
     public Boolean checkDuplicate(String email) {
         return userRepository.existsByEmail(email);
@@ -96,19 +106,25 @@ public class UserService {
                 .build();
     }
 
-    public void updateUser(Long userId, UpdateUserDto updateUserDto) {
-        Optional<User> user = userRepository.findById(userId);
-        if (user.isEmpty()) {
-            throw new GeneralException(ErrorStatus.USER_NOT_FOUND);
-        }
-        user.get().update(updateUserDto.getName(),updateUserDto.getEmail());
+    public void updateUser(User user, UpdateUserDto updateUserDto) {
+        Set<Category> categories = categoryConverter.fromKrCategories(updateUserDto.getPreferCategory());
+        user.update(updateUserDto.getName(),categories);
     }
 
-    public User findUserById(Long userId) {
-        Optional<User> user = userRepository.findById(userId);
-        if (user.isEmpty()) {
-            throw new GeneralException(ErrorStatus.USER_NOT_FOUND);
-        }
-        return user.get();
+    public Set<String> getPreferCategory(User user) {
+        Set<Category> categories = user.getInterestedCategory();
+        return categories.stream()
+                .map(Category::getKorean)
+                .collect(Collectors.toSet());
+    }
+
+    public MyPageDto getMyPageInfo(User user) {
+        YearMonth nowMonth = YearMonth.now();
+        YearMonth previousMonth = nowMonth.minusMonths(1);
+        return MyPageDto.builder()
+                .name(user.getName())
+                .grade(gradeConverter.convertGrade(userAttendanceService.getAttendance(user, previousMonth)).toString())
+                .days(userAttendanceService.getAttendance(user, nowMonth))
+                .build();
     }
 }
