@@ -9,11 +9,13 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 @Entity
 @Getter
+@Setter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
@@ -32,7 +34,7 @@ public class User extends BaseEntity {
     @CollectionTable(name = "user_interests", joinColumns = @JoinColumn(name = "user_id"))
     @Enumerated(EnumType.STRING)
     @Column(name = "category")
-    private Set<Category> interestedCategory;
+    private Set<Category> interestedCategory = new HashSet<>();
 
     // todo string
     private NotificationSetting notificationSetting;
@@ -44,9 +46,8 @@ public class User extends BaseEntity {
     @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
     private List<UserAttendance> userAttendanceList = new ArrayList<>();
 
-    public User update(String name, Set<Category> category) {
-        this.name = name;
-        this.interestedCategory = category;
+    public User update(Set<Category> interestedCategory) {
+        this.interestedCategory = interestedCategory;
         return this;
     }
 
