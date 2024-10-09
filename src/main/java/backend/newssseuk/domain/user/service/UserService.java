@@ -8,7 +8,7 @@ import backend.newssseuk.domain.refreshToken.repository.RefreshTokenRepository;
 import backend.newssseuk.domain.refreshToken.service.RefreshTokenService;
 import backend.newssseuk.domain.user.User;
 import backend.newssseuk.domain.user.jwt.JWTUtil;
-import backend.newssseuk.domain.user.web.request.UpdateUserDto;
+import backend.newssseuk.domain.user.web.request.UpdateCategoryDto;
 import backend.newssseuk.domain.user.web.response.JwtToken;
 import backend.newssseuk.domain.user.repository.UserRepository;
 import backend.newssseuk.domain.user.web.request.SignInDto;
@@ -19,6 +19,8 @@ import backend.newssseuk.domain.user.web.response.TokenResponse;
 import backend.newssseuk.domain.userAttendance.service.UserAttendanceService;
 import backend.newssseuk.payload.exception.GeneralException;
 import backend.newssseuk.payload.status.ErrorStatus;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -44,6 +46,9 @@ public class UserService {
     private final CategoryConverter categoryConverter;
     private final UserAttendanceService userAttendanceService;
     private final GradeConverter gradeConverter;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     public Boolean checkDuplicate(String email) {
         return userRepository.existsByEmail(email);
@@ -106,9 +111,14 @@ public class UserService {
                 .build();
     }
 
-    public void updateUser(User user, UpdateUserDto updateUserDto) {
-        Set<Category> categories = categoryConverter.fromKrCategories(updateUserDto.getPreferCategory());
-        user.update(updateUserDto.getName(),categories);
+//    public void updateUser(User user, UpdateUserDto updateUserDto) {
+//        Set<Category> categories = categoryConverter.fromKrCategories(updateUserDto.getPreferCategory());
+//        user.update(updateUserDto.getName(),categories);
+//    }
+
+    public void updateFavCategory(User user, UpdateCategoryDto categoryDto) {
+        Set<Category> categories = categoryConverter.fromKrCategories(categoryDto.getPreferCategory());
+        userRepository.save(user.update(categories));
     }
 
     public Set<String> getPreferCategory(User user) {
