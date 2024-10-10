@@ -10,10 +10,4 @@ import java.util.List;
 public class UserHistorySaveDto {
     private Long userId;
     private List<Long> articleList;
-
-    public UserHistorySaveDto(Long Id, List<Long> List){
-        this.userId=Id;
-        this.articleList=List;
-    }
-
 }

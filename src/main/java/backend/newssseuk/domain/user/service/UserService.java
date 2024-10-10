@@ -121,8 +121,9 @@ public class UserService {
         userRepository.save(user.update(categories));
     }
 
+    @Transactional(readOnly = true)
     public Set<String> getPreferCategory(User user) {
-        Set<Category> categories = user.getInterestedCategory();
+        Set<Category> categories = userRepository.findInterestedCategoriesByUserId(user.getId());
         return categories.stream()
                 .map(Category::getKorean)
                 .collect(Collectors.toSet());
