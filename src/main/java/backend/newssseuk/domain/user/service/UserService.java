@@ -54,7 +54,7 @@ public class UserService {
         return userRepository.existsByEmail(email);
     }
 
-    public void createAccount(SignUpDto signUpDto) {
+    public SignInResponseDto createAccount(SignUpDto signUpDto) {
         String name = signUpDto.getName();
         String email = signUpDto.getEmail();
         String password = signUpDto.getPassword();
@@ -72,6 +72,13 @@ public class UserService {
                 .build();
 
         userRepository.save(newUser);
+
+        SignInDto signInDto = SignInDto.builder()
+                .email(email)
+                .password(password)
+                .build();
+
+        return signIn(signInDto);
     }
 
     public SignInResponseDto signIn(SignInDto signInDto) {
