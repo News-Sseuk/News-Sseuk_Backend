@@ -46,7 +46,12 @@ public class User extends BaseEntity {
     @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
     private List<UserAttendance> userAttendanceList = new ArrayList<>();
 
-    public User update(Set<Category> interestedCategory) {
+    public User updateName(String newName) {
+        this.name = newName;
+        return this;
+    }
+
+    public User updateCategory(Set<Category> interestedCategory) {
         this.interestedCategory = interestedCategory;
         return this;
     }
