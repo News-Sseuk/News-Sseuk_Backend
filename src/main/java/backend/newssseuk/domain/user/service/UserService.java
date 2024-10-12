@@ -9,18 +9,16 @@ import backend.newssseuk.domain.refreshToken.service.RefreshTokenService;
 import backend.newssseuk.domain.user.User;
 import backend.newssseuk.domain.user.jwt.JWTUtil;
 import backend.newssseuk.domain.user.web.request.UpdateCategoryDto;
+import backend.newssseuk.domain.user.web.request.UpdateNameDto;
 import backend.newssseuk.domain.user.web.response.JwtToken;
 import backend.newssseuk.domain.user.repository.UserRepository;
 import backend.newssseuk.domain.user.web.request.SignInDto;
 import backend.newssseuk.domain.user.web.request.SignUpDto;
 import backend.newssseuk.domain.user.web.response.MyPageDto;
-import backend.newssseuk.domain.user.web.response.SignInResponseDto;
 import backend.newssseuk.domain.user.web.response.TokenResponse;
 import backend.newssseuk.domain.userAttendance.service.UserAttendanceService;
 import backend.newssseuk.payload.exception.GeneralException;
 import backend.newssseuk.payload.status.ErrorStatus;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -47,14 +45,11 @@ public class UserService {
     private final UserAttendanceService userAttendanceService;
     private final GradeConverter gradeConverter;
 
-    @PersistenceContext
-    private EntityManager entityManager;
-
     public Boolean checkDuplicate(String email) {
         return userRepository.existsByEmail(email);
     }
 
-    public void createAccount(SignUpDto signUpDto) {
+    public TokenResponse createAccount(SignUpDto signUpDto) {
         String name = signUpDto.getName();
         String email = signUpDto.getEmail();
         String password = signUpDto.getPassword();
@@ -72,9 +67,16 @@ public class UserService {
                 .build();
 
         userRepository.save(newUser);
+
+        SignInDto signInDto = SignInDto.builder()
+                .email(email)
+                .password(password)
+                .build();
+
+        return signIn(signInDto);
     }
 
-    public SignInResponseDto signIn(SignInDto signInDto) {
+    public TokenResponse signIn(SignInDto signInDto) {
         String email = signInDto.getEmail();
         String password = signInDto.getPassword();
 
@@ -84,8 +86,8 @@ public class UserService {
         JwtToken jwtToken = refreshTokenService.createTokens(authenticationToken.getName(),email);
         refreshTokenService.saveRefreshToken(jwtToken.getAccessToken(), jwtToken.getRefreshToken());
 
-        return SignInResponseDto.builder()
-                .token(jwtToken)
+        return TokenResponse.builder()
+                .accessToken(jwtToken.getAccessToken())
                 .build();
     }
 
@@ -111,14 +113,13 @@ public class UserService {
                 .build();
     }
 
-//    public void updateUser(User user, UpdateUserDto updateUserDto) {
-//        Set<Category> categories = categoryConverter.fromKrCategories(updateUserDto.getPreferCategory());
-//        user.update(updateUserDto.getName(),categories);
-//    }
+    public void updateName(User user, UpdateNameDto updateNameDto) {
+        user.updateName(updateNameDto.getName());
+    }
 
     public void updateFavCategory(User user, UpdateCategoryDto categoryDto) {
         Set<Category> categories = categoryConverter.fromKrCategories(categoryDto.getPreferCategory());
-        userRepository.save(user.update(categories));
+        userRepository.save(user.updateCategory(categories));
     }
 
     @Transactional(readOnly = true)

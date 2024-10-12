@@ -6,16 +6,14 @@ import backend.newssseuk.domain.user.service.UserService;
 import backend.newssseuk.domain.user.web.request.SignInDto;
 import backend.newssseuk.domain.user.web.request.SignUpDto;
 import backend.newssseuk.domain.user.web.request.UpdateCategoryDto;
-import backend.newssseuk.domain.user.web.request.UpdateUserDto;
+import backend.newssseuk.domain.user.web.request.UpdateNameDto;
 import backend.newssseuk.domain.user.web.response.MyPageDto;
-import backend.newssseuk.domain.user.web.response.SignInResponseDto;
 import backend.newssseuk.domain.user.web.response.TokenResponse;
 import backend.newssseuk.payload.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Set;
 
 @CrossOrigin
@@ -27,9 +25,8 @@ public class UserController {
 
     @PostMapping("/user/signup")
     @Operation(summary = "회원가입")
-    public ApiResponse<Void> joinProcess(@RequestBody SignUpDto signUpDto) {
-        userService.createAccount(signUpDto);
-        return ApiResponse.onCreate();
+    public ApiResponse<TokenResponse> joinProcess(@RequestBody SignUpDto signUpDto) {
+        return ApiResponse.onSuccess(userService.createAccount(signUpDto));
     }
 
     @GetMapping("/user/email/{email}")
@@ -40,7 +37,7 @@ public class UserController {
 
     @PostMapping("/user/signin")
     @Operation(summary = "로그인")
-    public ApiResponse<SignInResponseDto> signIn(@RequestBody SignInDto signInDto) {
+    public ApiResponse<TokenResponse> signIn(@RequestBody SignInDto signInDto) {
         return ApiResponse.onSuccess(userService.signIn(signInDto));
     }
 
@@ -69,12 +66,12 @@ public class UserController {
         return ApiResponse.onSuccess(userService.getPreferCategory(user));
     }
 
-//    @PatchMapping(value = "/mypage/setting")
-//    @Operation(summary = "mypage에서 개인정보 수정 화면")
-//    public ApiResponse<Void> updateUserInfo(@RequestBody UpdateUserDto updateUserDto, @AuthUser User user) {
-//        userService.updateUser(user, updateUserDto);
-//        return ApiResponse.onSuccess();
-//    }
+    @PatchMapping(value = "/mypage/name")
+    @Operation(summary = "mypage에서 개인정보 수정 화면")
+    public ApiResponse<Void> updateUserInfo(@RequestBody UpdateNameDto updateNameDto, @AuthUser User user) {
+        userService.updateName(user, updateNameDto);
+        return ApiResponse.onSuccess();
+    }
 
     @PatchMapping(value = "/mypage/category")
     @Operation(summary = "관심 카테고리 등록, 수정 API")
