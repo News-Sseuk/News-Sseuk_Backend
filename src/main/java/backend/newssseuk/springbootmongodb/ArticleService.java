@@ -40,7 +40,7 @@ public class ArticleService {
     private final ArticlesConfig articlesConfig;
     WebDriver webDriver;
 
-    public void getCrawlingInfos() {
+    public void getCrawlingInfos() throws Exception{
         List<String> urls = articlesConfig.getUrls();
         // aws의 t3micro 서버로 인한 카테고리별 순차 진행
         for (String url : urls) {
@@ -48,7 +48,7 @@ public class ArticleService {
         }
     }
 
-    private void crawlingByCategory(String url) {
+    private void crawlingByCategory(String url) throws Exception{
         int i=1;
         int div=1;
         webDriver = threadLocalService.getDriver();

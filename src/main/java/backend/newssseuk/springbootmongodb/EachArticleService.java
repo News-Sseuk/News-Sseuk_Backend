@@ -1,6 +1,7 @@
 package backend.newssseuk.springbootmongodb;
 
 import backend.newssseuk.domain.article.repository.JpaArticleRepository;
+import backend.newssseuk.domain.article.service.JpaArticleService;
 import backend.newssseuk.domain.enums.Category;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,9 +24,10 @@ public class EachArticleService {
     private final ArticleRepository articleRepository;
     private final JpaArticleRepository jpaArticleRepository;
     private final ThreadLocalService threadLocalService;
+    private final JpaArticleService jpaArticleService;
     WebDriver webDriver;
     @Async("executor")
-    public void getEachArticles(Category category, List<String> urlList) {
+    public void getEachArticles(Category category, List<String> urlList) throws Exception{
         webDriver = threadLocalService.getDriver();
 
         for (String articleUrl : urlList) {
@@ -83,7 +85,9 @@ public class EachArticleService {
                     .crawledTime(LocalDateTime.now())
                     .nosqlId(savedArticle.getId())
                     .build();
-            jpaArticleRepository.save(jpaArticle);
+            backend.newssseuk.domain.article.Article savedJpaArticle = jpaArticleRepository.save(jpaArticle);
+            // AI 서버 배포 후 주석 없애기 ~.~
+            //jpaArticleService.saveArticleDetailByAI("http://127.0.0.1:80/article/detail",savedJpaArticle.getId());
         }
         threadLocalService.quitDriver();
     }
