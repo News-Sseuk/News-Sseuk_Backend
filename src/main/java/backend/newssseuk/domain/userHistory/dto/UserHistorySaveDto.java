@@ -8,6 +8,5 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 public class UserHistorySaveDto {
-    private Long userId;
     private List<Long> articleList;
 }
