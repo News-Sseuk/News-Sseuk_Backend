@@ -1,7 +1,9 @@
 package backend.newssseuk.domain.articleHashTag.service;
 
 import backend.newssseuk.domain.articleHashTag.repository.ArticleHashTagRepository;
+import backend.newssseuk.domain.articleHashTag.web.SearchingUIDto;
 import backend.newssseuk.domain.hashTag.HashTag;
+import backend.newssseuk.domain.user.User;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,13 +25,17 @@ public class ArticleHashTagService {
                 .collect(Collectors.toList());
     }
 
-    public List<String> getTrending() {
+    public SearchingUIDto getTrending(User user) {
         LocalDateTime twoHoursAgo = LocalDateTime.now().minusHours(2);
         List<HashTag> hashTagList = articleHashTagRepository.findTop8HashTagsInLast2Hours(twoHoursAgo);
 
-        return hashTagList.stream()
+        List<String> trending = hashTagList.stream()
                 .map(HashTag::getName)
-                .collect(Collectors.toList());
+                .toList();
+        return SearchingUIDto.builder()
+                .name(user.getName())
+                .trending(trending)
+                .build();
     }
 
 }
