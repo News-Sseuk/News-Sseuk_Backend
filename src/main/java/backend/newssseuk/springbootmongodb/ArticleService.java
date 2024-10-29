@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Slf4j
@@ -114,6 +115,7 @@ public class ArticleService {
     }
 
     public List<ArticleThumbnailDTO> getArticleThumbnailsByJpa(List<Article> jpaArticleList) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         List<ArticleThumbnailDTO> articleThumbnailDTOList = new ArrayList<>();
         for(Article jpaArticle : jpaArticleList) {
             ArticleResponseDto articleDto = findArticles(jpaArticle.getNosqlId());
@@ -121,7 +123,7 @@ public class ArticleService {
                     .id(articleDto.getId())
                     .title(articleDto.getTitle())
                     .description((articleDto.getContent().length() > 80) ? articleDto.getContent().substring(0, 80) : articleDto.getContent())
-                    .publishedDate(jpaArticle.getCrawledTime())
+                    .publishedDate(jpaArticle.getCrawledTime().format(formatter))
                     .category(jpaArticle.getCategory().getKorean())
                     .hashTagList(articleHashTagService.getHashTagListByArticleId(jpaArticle.getId()))
                     .reliability(jpaArticle.getReliability())
@@ -132,6 +134,7 @@ public class ArticleService {
     }
 
     public List<ArticleThumbnailDTO> getArticleThumbnailsByMongo(List<backend.newssseuk.springbootmongodb.Article> articleList) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         List<ArticleThumbnailDTO> articleThumbnailDTOList = new ArrayList<>();
         for(backend.newssseuk.springbootmongodb.Article article : articleList) {
             Article jpaArticle = jpaArticleService.findByMongoId(article.getId());
@@ -140,7 +143,7 @@ public class ArticleService {
                     .id(articleDto.getId())
                     .title(articleDto.getTitle())
                     .description((articleDto.getContent().length() > 80) ? articleDto.getContent().substring(0, 80) : articleDto.getContent())
-                    .publishedDate(article.getPublishedDate())
+                    .publishedDate(article.getPublishedDate().format(formatter))
                     .category(article.getCategory().getKorean())
                     .hashTagList(articleHashTagService.getHashTagListByArticleId(jpaArticle.getId()))
                     .reliability(jpaArticle.getReliability())

@@ -3,7 +3,6 @@ package backend.newssseuk.springbootmongodb.dto;
 import lombok.Builder;
 import lombok.Getter;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -12,7 +11,7 @@ public class ArticleThumbnailDTO {
     private String id;
     private String title;
     private String description;
-    private LocalDateTime publishedDate;
+    private String publishedDate;
     private String category;
     private List<String> hashTagList;
     private Integer reliability;
