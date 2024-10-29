@@ -34,6 +34,8 @@ public class Article {
 
     private String summary;
 
+    private String issue;
+
     @CreatedDate
     private LocalDateTime crawledTime;
 
