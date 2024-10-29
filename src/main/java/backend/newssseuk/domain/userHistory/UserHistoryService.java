@@ -17,8 +17,8 @@ public class UserHistoryService {
     private final JpaArticleRepository jpaArticleRepository;
 
     @Transactional
-    public void addUserHistory(User user, List<Long> articleList){
-        List<Article> MysqlArticleList = articleList.stream().map(articleId -> jpaArticleRepository.findById(articleId).orElseThrow()).toList();
+    public void addUserHistory(User user, List<String> articleList){
+        List<Article> MysqlArticleList = articleList.stream().map(articleId -> jpaArticleRepository.findByNosqlId(articleId).orElseThrow()).toList();
 
         if (userHistoryRepository.findByUser(user) == null){
             UserHistory userHistory = userHistoryRepository.save(UserHistory.builder()
