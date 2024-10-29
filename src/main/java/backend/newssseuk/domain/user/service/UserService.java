@@ -114,7 +114,8 @@ public class UserService {
     }
 
     public void updateName(User user, UpdateNameDto updateNameDto) {
-        user.updateName(updateNameDto.getName());
+        user = user.updateName(updateNameDto.getName());
+        userRepository.save(user);
     }
 
     public void updateFavCategory(User user, UpdateCategoryDto categoryDto) {
