@@ -4,6 +4,9 @@ import backend.newssseuk.domain.article.Article;
 import backend.newssseuk.domain.hashTag.HashTag;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -22,4 +25,7 @@ public class ArticleHashTag {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "hashtag_id")
     private HashTag hashTag;
+
+    @CreatedDate
+    private LocalDateTime createdTime;
 }

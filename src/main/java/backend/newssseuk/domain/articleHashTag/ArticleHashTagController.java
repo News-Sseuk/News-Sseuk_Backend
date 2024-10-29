@@ -1,5 +1,6 @@
-package backend.newssseuk.domain.trendingKeywords;
+package backend.newssseuk.domain.articleHashTag;
 
+import backend.newssseuk.domain.articleHashTag.service.ArticleHashTagService;
 import backend.newssseuk.payload.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -14,13 +15,12 @@ import java.util.List;
 @CrossOrigin
 @RequiredArgsConstructor
 @RequestMapping("/trending")
-public class TrendingKeywordsController {
-    private final TrendingKeywordService trendingKeywordService;
+public class ArticleHashTagController {
+    private final ArticleHashTagService articleHashTagService;
 
-    //지금 뜨는 키워드 표시
     @GetMapping("/keywords")
     @Operation(summary = "검색창 화면 하단의 '지금 뜨는 뉴쓱' api입니다")
     public ApiResponse<List<String>> getTrendingKeywords() {
-        return ApiResponse.onSuccess(trendingKeywordService.getTrendingKeywords());
+        return ApiResponse.onSuccess(articleHashTagService.getTrending());
     }
 }
