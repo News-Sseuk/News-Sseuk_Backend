@@ -3,7 +3,6 @@ package backend.newssseuk.springbootmongodb.dto;
 import backend.newssseuk.domain.articleHashTag.ArticleHashTag;
 import backend.newssseuk.springbootmongodb.redis.ArticleRedisEntity;
 import com.mongodb.lang.Nullable;
-import jakarta.persistence.ElementCollection;
 import lombok.*;
 
 import java.util.List;
