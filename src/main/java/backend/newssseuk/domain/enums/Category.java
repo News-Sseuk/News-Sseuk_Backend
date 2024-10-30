@@ -31,7 +31,7 @@ public enum Category {
     PEOPLE("인물"),
     GENERAL_SOCIAL("사회일반"),
     HEALTH_INFO("건강정보"),
-    AUTOMOBILES_TEST_DRIVES("자동차_시승기"),
+    AUTOMOBILES_TESTDRIVES("자동차_시승기"),
     ROADS_TRAFFIC("도로_교통"),
     TRAVEL_LEISURE("여행_레저"),
     FOOD_RESTAURANTS("음식_맛집"),
