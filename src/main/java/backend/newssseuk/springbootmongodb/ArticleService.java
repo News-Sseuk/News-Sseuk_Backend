@@ -63,6 +63,7 @@ public class ArticleService {
         WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(60));
         wait.withTimeout(Duration.ofSeconds(5));  //5초 대기
         String categoryName = webDriver.findElement(By.xpath("//*[@id=\"newsct\"]/div[1]/div[1]/h3")).getAccessibleName();
+        categoryName = categoryName.replaceAll("/", "_");
         Category category = categoryConverter.fromKrCategory(categoryName);
 
         List<String> urlList = new ArrayList<>();
