@@ -6,6 +6,9 @@ import backend.newssseuk.domain.article.service.JpaArticleService;
 import backend.newssseuk.domain.articleHashTag.service.ArticleHashTagService;
 import backend.newssseuk.domain.enums.Category;
 import backend.newssseuk.domain.enums.converter.CategoryConverter;
+import backend.newssseuk.domain.user.User;
+import backend.newssseuk.domain.userHistory.UserHistoryRepository;
+import backend.newssseuk.domain.userHistory.UserHistoryService;
 import backend.newssseuk.springbootmongodb.dto.ArticleResponseDto;
 import backend.newssseuk.springbootmongodb.dto.ArticleThumbnailDTO;
 import backend.newssseuk.springbootmongodb.redis.ArticleRedisCachingService;
@@ -39,6 +42,8 @@ public class ArticleService {
     private final ArticleHashTagService articleHashTagService;
     private final JpaArticleService jpaArticleService;
     private final ArticlesConfig articlesConfig;
+    private final UserHistoryService userHistoryService;
+    private final UserHistoryRepository userHistoryRepository;
     WebDriver webDriver;
 
     public void getCrawlingInfos() throws Exception{
@@ -94,9 +99,12 @@ public class ArticleService {
     }
 
 
-    public ArticleResponseDto findArticles(String id) {
+    public ArticleResponseDto findArticles(User user, String id) {
         // redis에 있는 지 찾아보고
         // 등록 안되어있으면, mongodb에서 findById 해서 등록 (cashingArticles 함수 실행)
+        if(user != null) {
+            userHistoryService.addUserHistory(user, id);
+        }
         Optional<ArticleRedisEntity> articleRedisEntity = articleRedisRepository.findById(id);
         if (articleRedisEntity.isPresent()) {
             return new ArticleResponseDto(articleRedisEntity.get());
@@ -118,7 +126,7 @@ public class ArticleService {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         List<ArticleThumbnailDTO> articleThumbnailDTOList = new ArrayList<>();
         for(Article jpaArticle : jpaArticleList) {
-            ArticleResponseDto articleDto = findArticles(jpaArticle.getNosqlId());
+            ArticleResponseDto articleDto = findArticles(null,jpaArticle.getNosqlId());
             ArticleThumbnailDTO articleThumbnailDTO = ArticleThumbnailDTO.builder()
                     .id(articleDto.getId())
                     .title(articleDto.getTitle())
@@ -138,7 +146,7 @@ public class ArticleService {
         List<ArticleThumbnailDTO> articleThumbnailDTOList = new ArrayList<>();
         for(backend.newssseuk.springbootmongodb.Article article : articleList) {
             Article jpaArticle = jpaArticleService.findByMongoId(article.getId());
-            ArticleResponseDto articleDto = findArticles(article.getId());
+            ArticleResponseDto articleDto = findArticles(null, article.getId());
             ArticleThumbnailDTO articleThumbnailDTO = ArticleThumbnailDTO.builder()
                     .id(articleDto.getId())
                     .title(articleDto.getTitle())

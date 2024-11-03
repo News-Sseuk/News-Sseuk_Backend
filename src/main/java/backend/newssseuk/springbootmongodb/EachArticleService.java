@@ -1,7 +1,6 @@
 package backend.newssseuk.springbootmongodb;
 
 import backend.newssseuk.domain.article.repository.JpaArticleRepository;
-import backend.newssseuk.domain.article.service.JpaArticleService;
 import backend.newssseuk.domain.enums.Category;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +23,7 @@ public class EachArticleService {
     private final ArticleRepository articleRepository;
     private final JpaArticleRepository jpaArticleRepository;
     private final ThreadLocalService threadLocalService;
-    private final JpaArticleService jpaArticleService;
+
     WebDriver webDriver;
     @Async("executor")
     public void getEachArticles(Category category, List<String> urlList) throws Exception{
