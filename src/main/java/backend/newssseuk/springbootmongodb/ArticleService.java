@@ -7,7 +7,6 @@ import backend.newssseuk.domain.articleHashTag.service.ArticleHashTagService;
 import backend.newssseuk.domain.enums.Category;
 import backend.newssseuk.domain.enums.converter.CategoryConverter;
 import backend.newssseuk.domain.user.User;
-import backend.newssseuk.domain.userHistory.UserHistoryRepository;
 import backend.newssseuk.domain.userHistory.UserHistoryService;
 import backend.newssseuk.springbootmongodb.dto.ArticleResponseDto;
 import backend.newssseuk.springbootmongodb.dto.ArticleThumbnailDTO;
@@ -43,7 +42,6 @@ public class ArticleService {
     private final JpaArticleService jpaArticleService;
     private final ArticlesConfig articlesConfig;
     private final UserHistoryService userHistoryService;
-    private final UserHistoryRepository userHistoryRepository;
     WebDriver webDriver;
 
     public void getCrawlingInfos() throws Exception{
@@ -102,9 +100,7 @@ public class ArticleService {
     public ArticleResponseDto findArticles(User user, String id) {
         // redis에 있는 지 찾아보고
         // 등록 안되어있으면, mongodb에서 findById 해서 등록 (cashingArticles 함수 실행)
-        if(user != null) {
-            userHistoryService.addUserHistory(user, id);
-        }
+        userHistoryService.addUserHistory(user, id);
         Optional<ArticleRedisEntity> articleRedisEntity = articleRedisRepository.findById(id);
         if (articleRedisEntity.isPresent()) {
             return new ArticleResponseDto(articleRedisEntity.get());
@@ -161,5 +157,8 @@ public class ArticleService {
         return articleThumbnailDTOList;
     }
 
-
+    public List<ArticleThumbnailDTO> getUserHistories(User user) {
+        List<Article> articles =  userHistoryService.getArticleHistory(user);
+        return getArticleThumbnailsByJpa(articles);
+    }
 }

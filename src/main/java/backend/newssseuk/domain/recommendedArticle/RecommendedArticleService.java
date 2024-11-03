@@ -9,7 +9,7 @@ import backend.newssseuk.domain.recommendedArticle.redis.RecommendedArticleRedis
 import backend.newssseuk.domain.recommendedArticle.redis.RecommendedArticleRedisRepository;
 import backend.newssseuk.domain.relatedArticle.RelatedArticleRepository;
 import backend.newssseuk.domain.user.User;
-import backend.newssseuk.domain.userHistory.UserHistoryRepository;
+import backend.newssseuk.domain.userHistory.UserHistoryService;
 import backend.newssseuk.springbootmongodb.dto.ArticleResponseDto;
 import backend.newssseuk.springbootmongodb.redis.ArticleRedisEntity;
 import lombok.RequiredArgsConstructor;
@@ -23,17 +23,17 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class RecommendedArticleService {
     private final JpaArticleRepository jpaArticleRepository;
-    private final UserHistoryRepository userHistoryRepository;
     private final RecommendedArticleRedisRepository recommendedArticleRedisRepository;
     private final RecommendedArticleRepository recommendedArticleRepository;
     private final RecommendedArticleRedisCachingService recommendedArticleRedisCachingService;
     private final ArticleHelper articleHelper;
     private final RelatedArticleRepository relatedArticleRepository;
+    private final UserHistoryService userHistoryService;
 
     @Transactional
     public List<Article> collectingPersonalRecommendedArticles(User user) {      // 개인 추천기사 (검색 화면)
         List<Long> relatedArticleList = new ArrayList<>();
-        List<Article> articleList = userHistoryRepository.findByUser(user).getArticleList();
+        List<Article> articleList = userHistoryService.getArticleHistory(user);
 
         for (Article article : articleList) {
             if (relatedArticleRepository.findByArticle(article) != null) {
