@@ -124,7 +124,7 @@ public class ArticleService {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         List<ArticleThumbnailDTO> articleThumbnailDTOList = new ArrayList<>();
         for(Article jpaArticle : jpaArticleList) {
-            ArticleResponseDto articleDto = findArticles(null,jpaArticle.getNosqlId());
+            ArticleResponseDto articleDto = findArticles(null, jpaArticle.getNosqlId());
             ArticleThumbnailDTO articleThumbnailDTO = ArticleThumbnailDTO.builder()
                     .id(articleDto.getId())
                     .title(articleDto.getTitle())
