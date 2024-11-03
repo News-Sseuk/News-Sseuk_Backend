@@ -38,7 +38,6 @@ public class UserAttendanceService {
         }
     }
 
-    //todo 메인 화면 api에서 get마다 호출
     public void increaseAttendance(User user) {
         YearMonth yearMonth = YearMonth.from(LocalDateTime.now());
 

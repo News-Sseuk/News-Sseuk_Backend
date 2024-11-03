@@ -7,6 +7,7 @@ import backend.newssseuk.domain.articleHashTag.service.ArticleHashTagService;
 import backend.newssseuk.domain.enums.Category;
 import backend.newssseuk.domain.enums.converter.CategoryConverter;
 import backend.newssseuk.domain.user.User;
+import backend.newssseuk.domain.userAttendance.service.UserAttendanceService;
 import backend.newssseuk.domain.userHistory.UserHistoryService;
 import backend.newssseuk.springbootmongodb.dto.ArticleResponseDto;
 import backend.newssseuk.springbootmongodb.dto.ArticleThumbnailDTO;
@@ -42,6 +43,7 @@ public class ArticleService {
     private final JpaArticleService jpaArticleService;
     private final ArticlesConfig articlesConfig;
     private final UserHistoryService userHistoryService;
+    private final UserAttendanceService userAttendanceService;
     WebDriver webDriver;
 
     public void getCrawlingInfos() throws Exception{
@@ -52,9 +54,9 @@ public class ArticleService {
         }
     }
 
-    private void crawlingByCategory(String url) throws Exception{
-        int i=1;
-        int div=1;
+    private void crawlingByCategory(String url) throws Exception {
+        int i = 1;
+        int div = 1;
         webDriver = threadLocalService.getDriver();
 
         webDriver.get(url);
@@ -66,7 +68,7 @@ public class ArticleService {
         List<String> urlList = new ArrayList<>();
 
         // 기사들 url 수집
-        while(div < 7) {
+        while (div < 7) {
             if (i > 6) {
                 i = 1;
                 div++;
@@ -74,9 +76,9 @@ public class ArticleService {
 
             WebElement timeElement = null;
             try {
-                timeElement = webDriver.findElement(By.xpath(String.format("//*[@id=\"newsct\"]/div[2]/div/div[1]/div[%d]/ul/li[%d]/div/div/div[2]/div[2]/div[1]/div[2]/b",div , i)));
+                timeElement = webDriver.findElement(By.xpath(String.format("//*[@id=\"newsct\"]/div[2]/div/div[1]/div[%d]/ul/li[%d]/div/div/div[2]/div[2]/div[1]/div[2]/b", div, i)));
             } catch (Exception e) {
-                timeElement = webDriver.findElement(By.xpath(String.format("//*[@id=\"newsct\"]/div[2]/div/div[1]/div[%d]/ul/li[%d]/div/div/div/div[2]/div[1]/div[2]/b",div , i)));
+                timeElement = webDriver.findElement(By.xpath(String.format("//*[@id=\"newsct\"]/div[2]/div/div[1]/div[%d]/ul/li[%d]/div/div/div/div[2]/div[1]/div[2]/b", div, i)));
             }
             String timeText = timeElement.getText();
             int minutesAgo = Integer.parseInt(timeText.replaceAll("[^0-9]", ""));
@@ -84,9 +86,9 @@ public class ArticleService {
                 break;
             } else {
                 try {
-                    urlList.add(webDriver.findElement(By.xpath(String.format("//*[@id=\"newsct\"]/div[2]/div/div[1]/div[%d]/ul/li[%d]/div/div/div[2]/a",div ,i))).getAttribute("href"));
+                    urlList.add(webDriver.findElement(By.xpath(String.format("//*[@id=\"newsct\"]/div[2]/div/div[1]/div[%d]/ul/li[%d]/div/div/div[2]/a", div, i))).getAttribute("href"));
                 } catch (Exception e) {
-                    urlList.add(webDriver.findElement(By.xpath(String.format("//*[@id=\"newsct\"]/div[2]/div/div[1]/div[%d]/ul/li[%d]/div/div/div/a",div,i))).getAttribute("href"));
+                    urlList.add(webDriver.findElement(By.xpath(String.format("//*[@id=\"newsct\"]/div[2]/div/div[1]/div[%d]/ul/li[%d]/div/div/div/a", div, i))).getAttribute("href"));
                 }
                 i++;
                 System.out.println(category.getKorean());
@@ -95,7 +97,6 @@ public class ArticleService {
         eachArticleService.getEachArticles(category, urlList);
         threadLocalService.quitDriver();
     }
-
 
     public ArticleResponseDto findArticles(User user, String id) {
         // redis에 있는 지 찾아보고
@@ -109,7 +110,8 @@ public class ArticleService {
             return new ArticleResponseDto(cashed_article);}
     }
 
-    public List<ArticleThumbnailDTO> findArticleThumbnails(String categoryString, LocalDateTime cursorTime) {
+    public List<ArticleThumbnailDTO> findArticleThumbnails(User user, String categoryString, LocalDateTime cursorTime) {
+        userAttendanceService.increaseAttendance(user);
         if(cursorTime == null) {
             cursorTime = LocalDateTime.now();
         }

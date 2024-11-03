@@ -35,9 +35,10 @@ public class ArticleController {
     }
 
     @GetMapping("/article/{category}/{cursor_time}")
-    public ApiResponse<List<ArticleThumbnailDTO>> getArticleThumbnail(@PathVariable("category") String category,
+    public ApiResponse<List<ArticleThumbnailDTO>> getArticleThumbnail(@AuthUser User user,
+                                                                      @PathVariable("category") String category,
                                                                      @PathVariable("cursor_time") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime cursorTime){
-        return ApiResponse.onSuccess(articleService.findArticleThumbnails(category, cursorTime));
+        return ApiResponse.onSuccess(articleService.findArticleThumbnails(user, category, cursorTime));
     }
 
     @GetMapping("/history")
