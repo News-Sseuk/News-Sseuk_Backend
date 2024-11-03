@@ -4,7 +4,6 @@ import backend.newssseuk.domain.article.Article;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity(name="related_article")

@@ -17,9 +17,9 @@ public enum Category {
     INDUSTRY_BUSINESS("산업_재계"),
     SMEs_STARTUPS("중기_벤처"),
     REAL_ESTATE("부동산"),
-    GLOBAL_ECONOMY("글로벌경제"),
+    GLOBAL_ECONOMY("글로벌 경제"),
     CONSUMER_ECONOMY("생활경제"),
-    GENERAL_ECONOMY("경제일반"),
+    GENERAL_ECONOMY("경제 일반"),
     INCIDENTS_ACCIDENTS("사건사고"),
     EDUCATION("교육"),
     LABOR("노동"),
@@ -29,7 +29,7 @@ public enum Category {
     FOOD_HEALTHCARE("식품_의료"),
     LOCAL("지역"),
     PEOPLE("인물"),
-    GENERAL_SOCIAL("사회일반"),
+    GENERAL_SOCIAL("사회 일반"),
     HEALTH_INFO("건강정보"),
     AUTOMOBILES_TESTDRIVES("자동차_시승기"),
     ROADS_TRAFFIC("도로_교통"),
@@ -40,11 +40,11 @@ public enum Category {
     BOOKS("책"),
     RELIGION("종교"),
     WEATHER("날씨"),
-    GENERAL_LIFESTYLE_CULTURE("생활문화일반"),
+    GENERAL_LIFESTYLE_CULTURE("생활문화 일반"),
     MOBILE("모바일"),
     INTERNET_SOCIAL_MEDIA("인터넷_SNS"),
     COMMUNICATIONS_NEW_MEDIA("통신_뉴미디어"),
-    GENERAL_IT("IT일반"),
+    GENERAL_IT("IT 일반"),
     SECURITY_HACKING("보안_해킹"),
     COMPUTERS("컴퓨터"),
     GAMES_REVIEWS("게임_리뷰"),
@@ -53,7 +53,7 @@ public enum Category {
     AMERICAS("미국_중남미"),
     EUROPE("유럽"),
     MIDDLE_EAST_AFRICA("중동_아프리카"),
-    GENERAL_WORLD("세계일반");
+    GENERAL_WORLD("세계 일반");
 
     private final String korean;
 }
