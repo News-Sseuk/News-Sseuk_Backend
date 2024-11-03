@@ -1,5 +1,7 @@
 package backend.newssseuk.springbootmongodb;
 
+import backend.newssseuk.config.auth.AuthUser;
+import backend.newssseuk.domain.user.User;
 import backend.newssseuk.payload.ApiResponse;
 import backend.newssseuk.springbootmongodb.dto.ArticleResponseDto;
 import backend.newssseuk.springbootmongodb.dto.ArticleThumbnailDTO;
@@ -27,8 +29,8 @@ public class ArticleController {
     }
 
     @GetMapping("redis/article/{id}")
-    public ApiResponse<ArticleResponseDto> findByArticleId(@PathVariable("id") String id){
-        return ApiResponse.onSuccess(articleService.findArticles(id));
+    public ApiResponse<ArticleResponseDto> findByArticleId(@AuthUser User user, @PathVariable("id") String id){
+        return ApiResponse.onSuccess(articleService.findArticles(user, id));
     }
 
     @GetMapping("/article/{category}/{cursor_time}")

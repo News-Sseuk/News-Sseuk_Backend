@@ -1,6 +1,5 @@
 package backend.newssseuk.springbootmongodb.redis;
 
-import backend.newssseuk.springbootmongodb.Article;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.Optional;

@@ -1,10 +1,7 @@
 package backend.newssseuk.springbootmongodb.redis;
 
-import backend.newssseuk.domain.article.Article;
 import backend.newssseuk.domain.articleHashTag.ArticleHashTag;
-import backend.newssseuk.domain.enums.Category;
 import com.mongodb.lang.Nullable;
-import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Id;
 import lombok.*;
 import org.springframework.data.redis.core.RedisHash;
