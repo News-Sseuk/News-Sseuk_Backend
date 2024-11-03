@@ -9,7 +9,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -22,7 +21,6 @@ import java.util.List;
 public class ArticleController {
     private final ArticleService articleService;
 
-    // 상위 카테고리 숫자의 범위 : 100 ~ 105
     //@Scheduled(cron = "0 0/10 * * * *", zone = "Asia/Seoul") // 10분마다 실행 (참고:https://dev-coco.tistory.com/176)
     @GetMapping("api/crawling")
     public void crawling() throws Exception{

@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -21,17 +22,21 @@ public class UserHistoryService {
         Article mysqlArticle = jpaArticleRepository.findByNosqlId(articleId).orElseThrow();
 
         long count = userHistoryRepository.countByUser(user);
-        if (count >= 10) {
-            List<UserHistory> oldestArticles = userHistoryRepository.findTop10ByUserOrderByReadAtDesc(user);
-            userHistoryRepository.delete(oldestArticles.get(9));
+        Optional<UserHistory> optionalUserHistory = userHistoryRepository.findUserHistoryByArticleAndUser(mysqlArticle,user);
+
+        if(optionalUserHistory.isEmpty()) {
+            if (count >= 10) {
+                List<UserHistory> oldestArticles = userHistoryRepository.findTop10ByUserOrderByReadAtDesc(user);
+                userHistoryRepository.delete(oldestArticles.get(9));
+            }
+
+            UserHistory userHistory = new UserHistory();
+            userHistory.setUser(user);
+            userHistory.setArticle(mysqlArticle);
+            userHistory.setReadAt(LocalDateTime.now());
+
+            userHistoryRepository.save(userHistory);
         }
-
-        UserHistory userHistory = new UserHistory();
-        userHistory.setUser(user);
-        userHistory.setArticle(mysqlArticle);
-        userHistory.setReadAt(LocalDateTime.now());
-
-        userHistoryRepository.save(userHistory);
     }
 
     public List<Article> getArticleHistory(User user) {
