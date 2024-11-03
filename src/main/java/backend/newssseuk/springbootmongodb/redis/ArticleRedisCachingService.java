@@ -28,6 +28,7 @@ public class ArticleRedisCachingService {
 
         try {
             return articleRedisRepository.save(ArticleRedisEntity.builder()
+                    .id(article.get().getId())
                     .title(article.get().getTitle())
                     .press(article.get().getPress())
                     .journalist(article.get().getJournalist())
