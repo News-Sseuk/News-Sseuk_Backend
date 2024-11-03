@@ -5,6 +5,7 @@ import backend.newssseuk.domain.user.User;
 import backend.newssseuk.payload.ApiResponse;
 import backend.newssseuk.springbootmongodb.dto.ArticleResponseDto;
 import backend.newssseuk.springbootmongodb.dto.ArticleThumbnailDTO;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -34,8 +35,15 @@ public class ArticleController {
     }
 
     @GetMapping("/article/{category}/{cursor_time}")
-    public ApiResponse<List<ArticleThumbnailDTO>> getArticleThumbnail(@PathVariable("category") String category,
+    public ApiResponse<List<ArticleThumbnailDTO>> getArticleThumbnail(@AuthUser User user,
+                                                                      @PathVariable("category") String category,
                                                                      @PathVariable("cursor_time") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime cursorTime){
-        return ApiResponse.onSuccess(articleService.findArticleThumbnails(category, cursorTime));
+        return ApiResponse.onSuccess(articleService.findArticleThumbnails(user, category, cursorTime));
+    }
+
+    @GetMapping("/history")
+    @Operation(summary = "유저의 기사 기록 api로 10개 나옵니다")
+    public ApiResponse<List<ArticleThumbnailDTO>> getUserHistory(@AuthUser User user) {
+        return ApiResponse.onSuccess(articleService.getUserHistories(user));
     }
 }
