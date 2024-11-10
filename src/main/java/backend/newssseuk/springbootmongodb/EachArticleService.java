@@ -90,7 +90,7 @@ public class EachArticleService {
                     .build();
             backend.newssseuk.domain.article.Article savedJpaArticle = jpaArticleRepository.save(jpaArticle);
             // AI 서버 배포 후 주석 없애기 ~.~
-            jpaArticleService.saveArticleDetailByAI("http://52.78.251.30:80/article/detail",savedJpaArticle.getId());
+            //jpaArticleService.saveArticleDetailByAI("http://52.78.251.30:80/article/detail",savedJpaArticle.getId());
         }
         threadLocalService.quitDriver();
     }
