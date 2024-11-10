@@ -1,6 +1,5 @@
 package backend.newssseuk.domain.enums.converter;
 
-import backend.newssseuk.domain.enums.Category;
 import backend.newssseuk.domain.enums.ReportingReason;
 import org.springframework.stereotype.Component;
 

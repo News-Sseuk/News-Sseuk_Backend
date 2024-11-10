@@ -27,6 +27,11 @@ public class ArticleController {
         articleService.getCrawlingInfos();
     }
 
+    @GetMapping("api/crawling/entertain")
+    public void crawlingEntertains(){
+        articleService.crawlEntertains();
+    }
+
     @GetMapping("redis/article/{id}")
     public ApiResponse<ArticleResponseDto> findByArticleId(@AuthUser User user, @PathVariable("id") String id){
         return ApiResponse.onSuccess(articleService.findArticles(user, id));
