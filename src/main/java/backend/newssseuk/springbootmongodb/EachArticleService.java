@@ -122,7 +122,6 @@ public class EachArticleService {
             Article article = Article.builder()
                     .category(Category.MOBILE)
                     .title(elementTitle.getText())
-                    //.journalist(elementJournalist.getText())
                     .press(elementPress.getText())
                     .content(articleBody.getText())
                     .image(Collections.singletonList(elementImage.getAttribute("src")))
