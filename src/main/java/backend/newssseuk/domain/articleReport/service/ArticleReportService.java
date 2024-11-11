@@ -20,6 +20,14 @@ public class ArticleReportService {
     private final ReportingReasonConverter reportingReasonConverter;
     private final ArticleReportRepository articleReportRepository;
 
+    public void applyToReliabilityScore(Article article, ReportingReason reportingReason) {
+        Integer reportCount = articleReportRepository.findArticleReportCntByReason(article, reportingReason);
+        if (reportCount%5 == 0 && reportCount != 0) {
+            article.setReliability(article.getReliability()-1);
+            jpaArticleRepository.save(article);
+        }
+    }
+
     public void updateArticleReport(Long article_id, String reason){
         Article article = jpaArticleRepository.findById(article_id).get();
         ReportingReason reportingReason = reportingReasonConverter.fromReasonReportingReason(reason);
@@ -29,6 +37,6 @@ public class ArticleReportService {
                 .reason(reportingReason)
                 .build();
         articleReportRepository.save(articleReport);
-
+        applyToReliabilityScore(article, reportingReason);
     }
 }
