@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 public class ReportingReasonConverter {
     public ReportingReason fromReasonReportingReason(String reason) {
         for (ReportingReason reportingReason : ReportingReason.values()) {
-            if (reportingReason.getReason().equals(reason)) {
+            if (reportingReason.getReason_detail().equals(reason)) {
                 return reportingReason;
             }
         }

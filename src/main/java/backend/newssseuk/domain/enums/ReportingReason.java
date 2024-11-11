@@ -12,5 +12,5 @@ public enum ReportingReason {
     NARROW_VIEW("편협한 시각"),
     SEVERE_CRITICISM("무차별적 비판");
 
-    private final String reason;
+    private final String reason_detail;
 }
