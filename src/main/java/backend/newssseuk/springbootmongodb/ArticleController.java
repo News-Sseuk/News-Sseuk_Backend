@@ -28,7 +28,7 @@ public class ArticleController {
     }
 
     @GetMapping("api/crawling/entertain")
-    public void crawlingEntertains(){
+    public void crawlingEntertains() throws Exception {
         articleService.crawlEntertains();
     }
 
