@@ -99,7 +99,7 @@ public class ArticleService {
         threadLocalService.quitDriver();
     }
 
-    public void crawlEntertains() {
+    public void crawlEntertains() throws Exception {
         webDriver = threadLocalService.getDriver();
         webDriver.get("https://news.nate.com/rank/interest?sc=ent");
         WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(180));
