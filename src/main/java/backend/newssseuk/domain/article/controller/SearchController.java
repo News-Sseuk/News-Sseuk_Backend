@@ -7,7 +7,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -20,7 +19,7 @@ public class SearchController {
     //검색 기능 구현
     @PostMapping("/{keyword}/{onOff}/{sort}/{cursorTime}")
     @Operation(summary = "검색 api입니다")
-    public ApiResponse<List<ArticleThumbnailDTO>> searchByKeyword (@PathVariable("cursorTime") LocalDateTime cursorTime,
+    public ApiResponse<List<ArticleThumbnailDTO>> searchByKeyword (@PathVariable("cursorTime") String cursorTime,
                                                                    @PathVariable("keyword") String keyword,
                                                                    @PathVariable("onOff") String onOff,
                                                                    @PathVariable("sort") String sort) {
