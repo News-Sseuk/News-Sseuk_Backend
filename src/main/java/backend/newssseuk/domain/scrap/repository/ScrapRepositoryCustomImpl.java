@@ -1,10 +1,12 @@
 package backend.newssseuk.domain.scrap.repository;
 
 import backend.newssseuk.domain.article.Article;
+import backend.newssseuk.domain.article.QArticle;
 import backend.newssseuk.domain.enums.Category;
 import backend.newssseuk.domain.scrap.QScrap;
 import backend.newssseuk.domain.user.User;
 import backend.newssseuk.springbootmongodb.ArticleService;
+import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +33,20 @@ public class ScrapRepositoryCustomImpl implements ScrapRepositoryCustom{
                 )
                 .orderBy(qScrap.article.id.asc())  // 최신순 정렬
                 .limit(3) // 페이지당 몇개의 데이터를 보여줄껀지
+                .fetch();
+    }
+
+    @Override
+    public List<Category> getCategoryByUser(User user) {
+        QScrap scrap = QScrap.scrap;
+        QArticle article = QArticle.article;
+
+        return jpaQueryFactory
+                .select(article.category)
+                .from(scrap)
+                .join(scrap.article, article)
+                .where(scrap.user.eq(user))
+                .groupBy(article.category)
                 .fetch();
     }
 
