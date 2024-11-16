@@ -11,7 +11,6 @@ import backend.newssseuk.springbootmongodb.ArticleService;
 import backend.newssseuk.springbootmongodb.dto.ArticleThumbnailDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,8 +25,8 @@ public class ScrapService {
     private final ScrapRepository scrapRepository;
     private final ArticleService articleService;
 
-    public String scrapArticleByArticleId(User user, Long article_id){
-        Article article = jpaArticleRepository.findById(article_id).get();
+    public String scrapArticleByArticleId(User user, String nosql_article_id){
+        Article article = jpaArticleRepository.findByNosqlId(nosql_article_id).get();
 
         Scrap scrapEntity = Scrap.builder()
                 .user(user)

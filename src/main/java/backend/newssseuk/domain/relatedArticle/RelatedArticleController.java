@@ -15,8 +15,8 @@ import java.util.List;
 public class RelatedArticleController {
     private final RelatedArticleService relatedArticleService;
     @GetMapping("api/personalrecommend/find/{articleId}")
-    public List<ArticleResponseDto> findRelatedArticles(@PathVariable("articleId") Long articleId){
-        return relatedArticleService.collectingRelatedArticles(articleId);
+    public List<ArticleResponseDto> findRelatedArticles(@PathVariable("articleId") String nosql_article_id){
+        return relatedArticleService.collectingRelatedArticles(nosql_article_id);
     }
 
     @PostMapping("api/personalrecommend/")

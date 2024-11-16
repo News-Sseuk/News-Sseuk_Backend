@@ -24,8 +24,8 @@ public class ScrapController {
     private final CategoryConverter categoryConverter;
 
     @PostMapping("scrap/{article_id}")
-    public ApiResponse<String> scrapArticle(@AuthUser User user, @PathVariable("article_id") Long article_id){
-        return ApiResponse.onSuccess(scrapService.scrapArticleByArticleId(user, article_id));
+    public ApiResponse<String> scrapArticle(@AuthUser User user, @PathVariable("article_id") String nosql_article_id){
+        return ApiResponse.onSuccess(scrapService.scrapArticleByArticleId(user, nosql_article_id));
     }
 
     @GetMapping("scrap/")

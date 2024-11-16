@@ -25,8 +25,8 @@ public class RelatedArticleService {
     private final ArticleHelper articleHelper;
 
     @Transactional
-    public List<ArticleResponseDto> collectingRelatedArticles(Long Id){
-        Article article = jpaArticleRepository.findById(Id).orElse(null);
+    public List<ArticleResponseDto> collectingRelatedArticles(String nosql_article_id){
+        Article article = jpaArticleRepository.findByNosqlId(nosql_article_id).orElse(null);
 
         RelatedArticleRedisEntity relatedArticleRedisEntity = relatedArticleRedisRepository.findByArticleId(article.getId());
         // 레디스에 저장된 값이 있을 때
