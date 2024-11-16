@@ -12,7 +12,7 @@ import java.util.List;
 @Builder
 @Getter
 @Setter
-@ToString
+@ToString(exclude = "hashTagList")
 @AllArgsConstructor
 @NoArgsConstructor
 @RedisHash(value="article")
@@ -34,7 +34,7 @@ public class ArticleRedisEntity {
     @Indexed
     private String category;
 
-    private List<ArticleHashTag> hashTagList;
+    private List<ArticleHashTagDTO> hashTagList;
 
     private Integer reliability;
 
