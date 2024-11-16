@@ -2,10 +2,12 @@ package backend.newssseuk.domain.scrap.repository;
 
 import backend.newssseuk.domain.article.Article;
 import backend.newssseuk.domain.article.service.JpaArticleService;
+import backend.newssseuk.domain.article.QArticle;
 import backend.newssseuk.domain.enums.Category;
 import backend.newssseuk.domain.scrap.QScrap;
 import backend.newssseuk.domain.user.User;
 import backend.newssseuk.springbootmongodb.ArticleService;
+import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -39,5 +41,18 @@ public class ScrapRepositoryCustomImpl implements ScrapRepositoryCustom{
     private BooleanExpression getLastArticleIdCondition(QScrap qScrap, String lastArticleId) {
         Article jpaArticle = jpaArticleService.findByMongoId(lastArticleId);
         return lastArticleId != null ? qScrap.article.id.gt(jpaArticle.getId()) : null;
+
+    @Override
+    public List<Category> getCategoryByUser(User user) {
+        QScrap scrap = QScrap.scrap;
+        QArticle article = QArticle.article;
+
+        return jpaQueryFactory
+                .select(article.category)
+                .from(scrap)
+                .join(scrap.article, article)
+                .where(scrap.user.eq(user))
+                .groupBy(article.category)
+                .fetch();
     }
 }

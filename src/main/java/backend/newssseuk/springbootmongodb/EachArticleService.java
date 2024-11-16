@@ -8,12 +8,17 @@ import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
+import org.springframework.retry.support.RetryTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpServerErrorException;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -25,10 +30,12 @@ public class EachArticleService {
     private final JpaArticleRepository jpaArticleRepository;
     private final ThreadLocalService threadLocalService;
     private final JpaArticleService jpaArticleService;
+    private final RetryTemplate retryTemplate;
 
     WebDriver webDriver;
+
     @Async("executor")
-    public void getEachArticles(Category category, List<String> urlList) throws Exception{
+    public void getEachArticles(Category category, List<String> urlList) throws Exception {
         webDriver = threadLocalService.getDriver();
 
         for (String articleUrl : urlList) {
@@ -88,8 +95,66 @@ public class EachArticleService {
                     .build();
             backend.newssseuk.domain.article.Article savedJpaArticle = jpaArticleRepository.save(jpaArticle);
             // AI 서버 배포 후 주석 없애기 ~.~
-            jpaArticleService.saveArticleDetailByAI("http://52.78.251.30:80/article/detail",savedJpaArticle.getId());
+            //jpaArticleService.saveArticleDetailByAI("http://52.78.251.30:80/article/detail",savedJpaArticle.getId());
+            retryTemplate.execute(context -> {
+                saveArticleDetailWithRetry(savedJpaArticle.getId());
+                return null;
+            });
         }
         threadLocalService.quitDriver();
+    }
+
+    @Async("executor")
+    public void getArticle(List<String> urlList) throws Exception {
+        webDriver = threadLocalService.getDriver();
+
+        for (String articleUrl : urlList) {
+            webDriver.get(articleUrl);
+
+            WebElement elementTitle = null;
+            try {
+                elementTitle = webDriver.findElement(By.xpath("//*[@id=\"articleView\"]/h1"));
+            } catch (Exception e) {
+            }
+
+            WebElement elementPress = webDriver.findElement(By.xpath("//*[@id=\"articleView\"]/p/span[1]/a[1]"));
+
+            WebElement elementImage = null;
+            try {
+                elementImage = webDriver.findElement(By.xpath("//*[@id=\"articleImage0\"]/span/span/img"));
+            } catch (Exception e) {
+                elementImage = webDriver.findElement(By.xpath("//*[@id=\"mainimg0\"]"));
+            }
+
+            WebElement articleBody = webDriver.findElement(By.id("realArtcContents"));
+
+            Article article = Article.builder()
+                    .category(Category.MOBILE)
+                    .title(elementTitle.getText())
+                    .press(elementPress.getText())
+                    .content(articleBody.getText())
+                    .image(Collections.singletonList(elementImage.getAttribute("src")))
+                    .publishedDate(LocalDateTime.now())
+                    .build();
+            Article savedArticle = articleRepository.save(article);
+
+            backend.newssseuk.domain.article.Article jpaArticle = backend.newssseuk.domain.article.Article.builder()
+                    .category(Category.MOBILE)
+                    .crawledTime(LocalDateTime.now())
+                    .nosqlId(savedArticle.getId())
+                    .build();
+            backend.newssseuk.domain.article.Article savedJpaArticle = jpaArticleRepository.save(jpaArticle);
+            //jpaArticleService.saveArticleDetailByAI("http://127.0.0.1:80/article/detail",savedJpaArticle.getId());
+            retryTemplate.execute(context -> {
+                saveArticleDetailWithRetry(savedJpaArticle.getId());
+                return null;
+            });
+        }
+        threadLocalService.quitDriver();
+    }
+
+    @Retryable(value = {HttpServerErrorException.class}, maxAttempts = 3, backoff = @Backoff(delay = 1000))
+    private void saveArticleDetailWithRetry(Long articleId) throws Exception {
+        jpaArticleService.saveArticleDetailByAI("http://127.0.0.1:80/article/detail", articleId);
     }
 }

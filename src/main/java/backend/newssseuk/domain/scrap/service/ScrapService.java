@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -50,5 +51,12 @@ public class ScrapService {
                 .hasNext(hasNext)
                 .articleList(thumbnailDTOS)
                 .build();
+    }
+
+    public List<String> getScrapCategories(User user) {
+        List<Category> categoryList = scrapRepository.getCategoryByUser(user);
+        return categoryList.stream()
+                .map(Category::getKorean)
+                .collect(Collectors.toList());
     }
 }

@@ -99,6 +99,21 @@ public class ArticleService {
         threadLocalService.quitDriver();
     }
 
+    public void crawlEntertains() throws Exception {
+        webDriver = threadLocalService.getDriver();
+        webDriver.get("https://news.nate.com/rank/interest?sc=ent");
+        WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(180));
+        wait.withTimeout(Duration.ofSeconds(5));
+
+        List<String> urlList = new ArrayList<>();
+        for(int i = 1 ; i < 6 ; i++) {
+            String url = webDriver.findElement(By.xpath(String.format("//*[@id=\"newsContents\"]/div/div[2]/div[%d]/div/a",i))).getAttribute("href");
+            urlList.add(url);
+        }
+
+        eachArticleService.getArticle(urlList);
+    }
+
     public ArticleResponseDto findArticles(User user, String id) {
         // redis에 있는 지 찾아보고
         // 등록 안되어있으면, mongodb에서 findById 해서 등록 (cashingArticles 함수 실행)

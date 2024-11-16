@@ -41,7 +41,7 @@ public enum Category {
     RELIGION("종교"),
     WEATHER("날씨"),
     GENERAL_LIFESTYLE_CULTURE("생활문화 일반"),
-    MOBILE("모바일"),
+    MOBILE("연애"),
     INTERNET_SOCIAL_MEDIA("인터넷_SNS"),
     COMMUNICATIONS_NEW_MEDIA("통신_뉴미디어"),
     GENERAL_IT("IT 일반"),

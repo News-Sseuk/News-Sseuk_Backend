@@ -4,7 +4,9 @@ import backend.newssseuk.domain.common.BaseEntity;
 import backend.newssseuk.domain.user.User;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.LastModifiedDate;
 
+import java.time.LocalDateTime;
 import java.time.YearMonth;
 
 @Entity
@@ -23,6 +25,9 @@ public class UserAttendance extends BaseEntity {
 
     @Column(nullable = false)
     private YearMonth attendanceDate;
+
+    @LastModifiedDate
+    private LocalDateTime lastModifiedDate;
 
     //각 월별 출석 일수 추가
     private Integer attendance;
