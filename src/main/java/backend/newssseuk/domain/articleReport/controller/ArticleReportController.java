@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 public class ArticleReportController {
     private final ArticleReportService articleReportService;
     @PostMapping("report/{article_id}")
-    public void reportArticleByReason(@PathVariable String nosql_article_id, @RequestBody ArticleReportDTO req){
+    public void reportArticleByReason(@PathVariable("article_id") String nosql_article_id, @RequestBody ArticleReportDTO req){
         articleReportService.updateArticleReport(nosql_article_id, req.getReason());
     }
 }
