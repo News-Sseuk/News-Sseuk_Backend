@@ -1,6 +1,7 @@
 package backend.newssseuk.domain.scrap.repository;
 
 import backend.newssseuk.domain.article.Article;
+import backend.newssseuk.domain.article.service.JpaArticleService;
 import backend.newssseuk.domain.article.QArticle;
 import backend.newssseuk.domain.enums.Category;
 import backend.newssseuk.domain.scrap.QScrap;
@@ -19,9 +20,10 @@ import java.util.List;
 @Repository
 public class ScrapRepositoryCustomImpl implements ScrapRepositoryCustom{
     private final JPAQueryFactory jpaQueryFactory;
+    private final JpaArticleService jpaArticleService;
 
     @Override
-    public List<Article> getUserArticleByCategory(User user, Category category, Long lastArticleId){
+    public List<Article> getUserArticleByCategory(User user, Category category, String lastArticleId){
         QScrap qScrap = QScrap.scrap;
         return jpaQueryFactory
                 .select(qScrap.article)
@@ -36,6 +38,10 @@ public class ScrapRepositoryCustomImpl implements ScrapRepositoryCustom{
                 .fetch();
     }
 
+    private BooleanExpression getLastArticleIdCondition(QScrap qScrap, String lastArticleId) {
+        Article jpaArticle = jpaArticleService.findByMongoId(lastArticleId);
+        return lastArticleId != null ? qScrap.article.id.gt(jpaArticle.getId()) : null;
+
     @Override
     public List<Category> getCategoryByUser(User user) {
         QScrap scrap = QScrap.scrap;
@@ -48,9 +54,5 @@ public class ScrapRepositoryCustomImpl implements ScrapRepositoryCustom{
                 .where(scrap.user.eq(user))
                 .groupBy(article.category)
                 .fetch();
-    }
-
-    private BooleanExpression getLastArticleIdCondition(QScrap qScrap, Long lastArticleId) {
-        return lastArticleId != null ? qScrap.article.id.gt(lastArticleId) : null;
     }
 }

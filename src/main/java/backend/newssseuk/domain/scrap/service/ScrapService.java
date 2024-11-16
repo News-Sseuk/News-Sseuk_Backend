@@ -26,8 +26,8 @@ public class ScrapService {
     private final ScrapRepository scrapRepository;
     private final ArticleService articleService;
 
-    public String scrapArticleByArticleId(User user, String article_id){
-        Article article = jpaArticleRepository.findByNosqlId(article_id).get();
+    public String scrapArticleByArticleId(User user, String nosql_article_id){
+        Article article = jpaArticleRepository.findByNosqlId(nosql_article_id).get();
 
         Scrap scrapEntity = Scrap.builder()
                 .user(user)
@@ -37,7 +37,7 @@ public class ScrapService {
         return article.getCategory().getKorean();
     }
 
-    public ScrapResponseDTO getScrapArticlesByUser(User user, Category category, Long lastArticleId){
+    public ScrapResponseDTO getScrapArticlesByUser(User user, Category category, String lastArticleId){
         List<Article> article_list =  scrapRepository.getUserArticleByCategory(user, category, lastArticleId);
         List<ArticleThumbnailDTO> thumbnailDTOS = articleService.getArticleThumbnailsByJpa(article_list);
 
