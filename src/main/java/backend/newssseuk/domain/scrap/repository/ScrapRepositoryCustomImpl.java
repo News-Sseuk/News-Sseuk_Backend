@@ -41,6 +41,7 @@ public class ScrapRepositoryCustomImpl implements ScrapRepositoryCustom{
     private BooleanExpression getLastArticleIdCondition(QScrap qScrap, String lastArticleId) {
         Article jpaArticle = jpaArticleService.findByMongoId(lastArticleId);
         return lastArticleId != null ? qScrap.article.id.gt(jpaArticle.getId()) : null;
+    }
 
     @Override
     public List<Category> getCategoryByUser(User user) {
