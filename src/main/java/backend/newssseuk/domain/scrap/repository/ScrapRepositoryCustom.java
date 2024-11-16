@@ -9,5 +9,5 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 public interface ScrapRepositoryCustom {
-    List<Article> getUserArticleByCategory(User user, Category category, Long lastArticleId);
+    List<Article> getUserArticleByCategory(User user, Category category, String lastArticleId);
 }

@@ -36,7 +36,7 @@ public class ScrapService {
         return article.getCategory().getKorean();
     }
 
-    public ScrapResponseDTO getScrapArticlesByUser(User user, Category category, Long lastArticleId){
+    public ScrapResponseDTO getScrapArticlesByUser(User user, Category category, String lastArticleId){
         List<Article> article_list =  scrapRepository.getUserArticleByCategory(user, category, lastArticleId);
         List<ArticleThumbnailDTO> thumbnailDTOS = articleService.getArticleThumbnailsByJpa(article_list);
 
