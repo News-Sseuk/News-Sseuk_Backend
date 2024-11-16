@@ -9,8 +9,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.format.DateTimeFormatter;
+import java.util.Collections;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -36,7 +38,16 @@ public class ArticleRedisCachingService {
                     .content(article.get().getContent())
                     .category(article.get().getCategory().getKorean())
                     .publishedDate(article.get().getPublishedDate().format(DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm")))    // yyyy.MM.dd HH:mm 형식으로 변경하기
-                    .hashTagList(jpaArticle.getArticleHashTagList())
+                    .hashTagList(Optional.ofNullable(jpaArticle.getArticleHashTagList())
+                            .orElse(Collections.emptyList())
+                            .stream()
+                            .map(articleHashTag -> ArticleHashTagDTO.builder()
+                                    .id(articleHashTag.getId())
+                                    .articleId(articleHashTag.getArticle().getId()) // Article ID만 사용
+                                    .hashTagName(articleHashTag.getHashTag().getName()) // HashTag 이름 사용
+                                    .createdTime(articleHashTag.getCreatedTime())
+                                    .build())
+                            .collect(Collectors.toList()))
                     .reliability(jpaArticle.getReliability())
                     .summary(jpaArticle.getSummary())
                     .build());
