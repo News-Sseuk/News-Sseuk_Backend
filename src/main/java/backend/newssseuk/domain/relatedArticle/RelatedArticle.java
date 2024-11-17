@@ -8,6 +8,7 @@ import java.util.List;
 
 @Entity(name="related_article")
 @Getter
+@Setter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
@@ -23,9 +24,4 @@ public class RelatedArticle {
     @ElementCollection
     private List<Long> articleList; // article_id 저장
                                     // 3개 요소
-
-    public void setArticle(Article article){
-        this.article=article;
-        article.setRelatedArticle(this);
-    }
 }
