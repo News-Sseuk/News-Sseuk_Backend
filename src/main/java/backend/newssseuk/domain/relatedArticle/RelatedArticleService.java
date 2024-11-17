@@ -1,15 +1,9 @@
 package backend.newssseuk.domain.relatedArticle;
 
 import backend.newssseuk.domain.article.Article;
-import backend.newssseuk.domain.article.ArticleHelper;
 import backend.newssseuk.domain.article.repository.JpaArticleRepository;
-import backend.newssseuk.domain.relatedArticle.redis.RelatedArticleRedisCachingService;
-import backend.newssseuk.domain.relatedArticle.redis.RelatedArticleRedisEntity;
-import backend.newssseuk.domain.relatedArticle.redis.RelatedArticleRedisRepository;
 import backend.newssseuk.springbootmongodb.ArticleService;
-import backend.newssseuk.springbootmongodb.dto.ArticleResponseDto;
 import backend.newssseuk.springbootmongodb.dto.ArticleThumbnailDTO;
-import backend.newssseuk.springbootmongodb.redis.ArticleRedisEntity;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,24 +14,27 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class RelatedArticleService {
     private final JpaArticleRepository jpaArticleRepository;
     private final RelatedArticleRepository relatedArticleRepository;
-    private final RelatedArticleRedisRepository relatedArticleRedisRepository;
     private final ArticleService articleService;
 
     @Transactional
     public List<ArticleThumbnailDTO> collectingRelatedArticles(String nosql_article_id) throws Exception {
         Article article = jpaArticleRepository.findByNosqlId(nosql_article_id).orElse(null);
         String fullUrl = "http://52.78.251.30:80/article/each?nosql_id=" + URLEncoder.encode(String.valueOf(nosql_article_id), "UTF-8");
+        if (saveRelatedArticleId(fullUrl) == null){
+            return null;
+        }
         List<Long> mysqlIdList = saveRelatedArticleId(fullUrl)
                 .stream()
                 .map(nosql_id -> jpaArticleRepository.findByNosqlId(nosql_id).get().getId()).toList();
+
         try {
             RelatedArticle relatedArticle = relatedArticleRepository.findByArticle(article);
             relatedArticle.setArticleList(mysqlIdList);
@@ -51,19 +48,6 @@ public class RelatedArticleService {
                 .map(mysqlId -> jpaArticleRepository.findById(mysqlId).orElseThrow())
                 .toList());
     }
-//        RelatedArticleRedisEntity relatedArticleRedisEntity = relatedArticleRedisRepository.findByArticleId(article.getId());
-//        // 레디스에 저장된 값이 있을 때
-//        if (relatedArticleRedisEntity != null){
-//            return relatedArticleRedisEntity.getArticleList();
-//        } else {  // 레디스에 저장된 값이 없을 때
-//            List<Article> articleResponseList = relatedArticle.getArticleList().stream()
-//                    .map(articleId -> jpaArticleRepository.findById(articleId)
-//                            .orElseThrow()) // 예외 발생 시, 기본적으로 NoSuchElementException 던짐.
-//                    .toList();
-//            List<ArticleRedisEntity> articleList = articleResponseList.stream()
-//                    .map(mysqlArticle -> mysqlArticle.getMongoEntity(articleHelper))
-//                    .collect(Collectors.toList());
-//            return relatedArticleRedisCachingService.cashingRelatedArticle(article, articleList).getArticleList();
 
     @Transactional
     public void addRelatedArticle(Long articleId, List<Long> articleList){
@@ -103,6 +87,11 @@ public class RelatedArticleService {
                 response.append(inputLine);
             }
             in.close();
+
+            // 응답이 비어 있거나 null일 경우 빈 리스트 반환
+            if (response.length() == 0) {
+                return new ArrayList<>();  // 빈 리스트 반환
+            }
 
             // JSON 응답을 List<String>으로 변환
             ObjectMapper objectMapper = new ObjectMapper();

@@ -2,9 +2,7 @@ package backend.newssseuk.domain.recommendedArticle;
 
 import backend.newssseuk.domain.article.Article;
 import backend.newssseuk.domain.article.repository.JpaArticleRepository;
-import backend.newssseuk.domain.articleHashTag.ArticleHashTag;
 import backend.newssseuk.domain.articleHashTag.service.ArticleHashTagService;
-import backend.newssseuk.domain.hashTag.HashTag;
 import backend.newssseuk.domain.recommendedArticle.dto.RecommendedArticleUpdateDto;
 import backend.newssseuk.domain.relatedArticle.RelatedArticleRepository;
 import backend.newssseuk.domain.user.User;
@@ -21,7 +19,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLEncoder;
 import java.util.*;
 import java.util.stream.Collectors;
 
