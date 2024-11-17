@@ -94,7 +94,6 @@ public class EachArticleService {
                     .nosqlId(savedArticle.getId())
                     .build();
             backend.newssseuk.domain.article.Article savedJpaArticle = jpaArticleRepository.save(jpaArticle);
-            // AI 서버 배포 후 주석 없애기 ~.~
             //jpaArticleService.saveArticleDetailByAI("http://52.78.251.30:80/article/detail",savedJpaArticle.getId());
             retryTemplate.execute(context -> {
                 saveArticleDetailWithRetry(savedJpaArticle.getId());
@@ -144,7 +143,6 @@ public class EachArticleService {
                     .nosqlId(savedArticle.getId())
                     .build();
             backend.newssseuk.domain.article.Article savedJpaArticle = jpaArticleRepository.save(jpaArticle);
-            //jpaArticleService.saveArticleDetailByAI("http://127.0.0.1:80/article/detail",savedJpaArticle.getId());
             retryTemplate.execute(context -> {
                 saveArticleDetailWithRetry(savedJpaArticle.getId());
                 return null;
@@ -155,6 +153,6 @@ public class EachArticleService {
 
     @Retryable(value = {HttpServerErrorException.class}, maxAttempts = 3, backoff = @Backoff(delay = 1000))
     private void saveArticleDetailWithRetry(Long articleId) throws Exception {
-        jpaArticleService.saveArticleDetailByAI("http://127.0.0.1:80/article/detail", articleId);
+        jpaArticleService.saveArticleDetailByAI("http://52.78.251.30:80/article/detail", articleId);
     }
 }
