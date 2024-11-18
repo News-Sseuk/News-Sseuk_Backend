@@ -11,9 +11,11 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -51,7 +53,7 @@ public class UserAttendanceService {
                     .attendanceDate(yearMonth)
                     .attendance(1)
                     .build();
-        } else {
+        } else if(Objects.equals(attendance.getLastModifiedDate().toLocalDate(), LocalDate.now())) {
             attendance.increaseAttendance();
         }
         userAttendanceRepository.save(attendance);
