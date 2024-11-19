@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
@@ -26,8 +27,10 @@ public class SearchService {
     private final ArticleRepository articleRepository;
     private final JpaArticleService jpaArticleService;
 
-    public List<ArticleThumbnailDTO> searchByKeyword(LocalDateTime cursorTime,String keyword, String onOff, String sort) {
+    public List<ArticleThumbnailDTO> searchByKeyword(String time,String keyword, String onOff, String sort) {
         Pageable pageable = PageRequest.of(0, 20);
+        time = time.replace("%", "T");
+        LocalDateTime cursorTime = LocalDateTime.parse(time, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
         List<Article> articleList = articleRepository.findByContentContainingAndPublishedDateLessThanOrderByPublishedDateDesc(keyword, cursorTime, pageable);
         boolean isJpaRequired = onOff.toLowerCase(Locale.ROOT).equals("on");
 

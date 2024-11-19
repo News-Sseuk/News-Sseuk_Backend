@@ -22,6 +22,7 @@ public class ArticleHashTagService {
         List<HashTag> hashTagList = articleHashTagRepository.findAllHashTagsByArticleId(articleId);
         return hashTagList.stream()
                 .map(HashTag::getName)
+                .distinct()
                 .collect(Collectors.toList());
     }
 

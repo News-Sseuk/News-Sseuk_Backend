@@ -29,7 +29,7 @@ public class EachArticleService {
 
     WebDriver webDriver;
 
-    @Async("executor")
+    //@Async("executor")
     public void getEachArticles(Category category, List<String> urlList) throws Exception {
         webDriver = threadLocalService.getDriver();
 
