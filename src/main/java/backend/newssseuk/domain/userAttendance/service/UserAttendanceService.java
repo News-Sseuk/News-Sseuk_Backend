@@ -53,7 +53,7 @@ public class UserAttendanceService {
                     .attendanceDate(yearMonth)
                     .attendance(1)
                     .build();
-        } else if(Objects.equals(attendance.getLastModifiedDate().toLocalDate(), LocalDate.now())) {
+        } else if(! Objects.equals(attendance.getLastModifiedDate().toLocalDate(), LocalDate.now())) {
             attendance.increaseAttendance();
         }
         userAttendanceRepository.save(attendance);
