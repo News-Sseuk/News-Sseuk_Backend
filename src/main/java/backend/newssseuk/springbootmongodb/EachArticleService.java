@@ -8,12 +8,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.springframework.retry.annotation.Backoff;
-import org.springframework.retry.annotation.Retryable;
-import org.springframework.retry.support.RetryTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpServerErrorException;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -30,7 +26,6 @@ public class EachArticleService {
     private final JpaArticleRepository jpaArticleRepository;
     private final ThreadLocalService threadLocalService;
     private final JpaArticleService jpaArticleService;
-    private final RetryTemplate retryTemplate;
 
     WebDriver webDriver;
 
@@ -94,11 +89,11 @@ public class EachArticleService {
                     .nosqlId(savedArticle.getId())
                     .build();
             backend.newssseuk.domain.article.Article savedJpaArticle = jpaArticleRepository.save(jpaArticle);
-            //jpaArticleService.saveArticleDetailByAI("http://52.78.251.30:80/article/detail",savedJpaArticle.getId());
-            retryTemplate.execute(context -> {
+            jpaArticleService.saveArticleDetailByAI("http://52.78.251.30:80/article/detail",savedJpaArticle.getId());
+            /*retryTemplate.execute(context -> {
                 saveArticleDetailWithRetry(savedJpaArticle.getId());
                 return null;
-            });
+            });*/
         }
         threadLocalService.quitDriver();
     }
@@ -143,16 +138,19 @@ public class EachArticleService {
                     .nosqlId(savedArticle.getId())
                     .build();
             backend.newssseuk.domain.article.Article savedJpaArticle = jpaArticleRepository.save(jpaArticle);
+            jpaArticleService.saveArticleDetailByAI("http://52.78.251.30:80/article/detail",savedJpaArticle.getId());
+/*
             retryTemplate.execute(context -> {
                 saveArticleDetailWithRetry(savedJpaArticle.getId());
                 return null;
             });
+*/
         }
         threadLocalService.quitDriver();
     }
 
-    @Retryable(value = {HttpServerErrorException.class}, maxAttempts = 3, backoff = @Backoff(delay = 1000))
+/*    @Retryable(value = {HttpServerErrorException.class}, maxAttempts = 3, backoff = @Backoff(delay = 1000))
     private void saveArticleDetailWithRetry(Long articleId) throws Exception {
         jpaArticleService.saveArticleDetailByAI("http://52.78.251.30:80/article/detail", articleId);
-    }
+    }*/
 }
