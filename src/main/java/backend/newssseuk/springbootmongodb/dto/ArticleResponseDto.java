@@ -1,12 +1,12 @@
 package backend.newssseuk.springbootmongodb.dto;
 
-import backend.newssseuk.domain.articleHashTag.ArticleHashTag;
 import backend.newssseuk.springbootmongodb.redis.ArticleHashTagDTO;
 import backend.newssseuk.springbootmongodb.redis.ArticleRedisEntity;
 import com.mongodb.lang.Nullable;
 import lombok.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Data
 @NoArgsConstructor
@@ -26,7 +26,7 @@ public class ArticleResponseDto {
 
     private String category;
 
-    private List<ArticleHashTagDTO> hashTagList;
+    private List<String> hashTagList;
 
     private Integer reliability;
 
@@ -42,7 +42,9 @@ public class ArticleResponseDto {
         this.image = article.getImage();
         this.content = article.getContent();
         this.category = article.getCategory();
-        this.hashTagList = article.getHashTagList();
+        this.hashTagList = article.getHashTagList().stream()
+                .map(ArticleHashTagDTO::getHashTagName).distinct()
+                .collect(Collectors.toList());
         this.reliability = article.getReliability();
         this.summary = article.getSummary();
         this.publishedDate = article.getPublishedDate();
