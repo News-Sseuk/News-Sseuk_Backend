@@ -5,6 +5,7 @@ import backend.newssseuk.springbootmongodb.redis.ArticleRedisEntity;
 import com.mongodb.lang.Nullable;
 import lombok.*;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -42,8 +43,11 @@ public class ArticleResponseDto {
         this.image = article.getImage();
         this.content = article.getContent();
         this.category = article.getCategory();
-        this.hashTagList = article.getHashTagList().stream()
-                .map(ArticleHashTagDTO::getHashTagName).distinct()
+        this.hashTagList = article.getHashTagList() == null
+                ? Collections.singletonList("더미")
+                : article.getHashTagList().stream()
+                .map(ArticleHashTagDTO::getHashTagName)
+                .distinct()
                 .collect(Collectors.toList());
         this.reliability = article.getReliability();
         this.summary = article.getSummary();
