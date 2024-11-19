@@ -28,7 +28,7 @@ public class WebConfig implements WebMvcConfigurer {
                 .allowedOrigins(
                         "http://localhost:8082",
                         "http://localhost:5173",
-                        "https://dysxr6eyyfkak.cloudfront.net"
+                        "http://newsseuk-fe-bucket.s3-website-ap-southeast-2.amazonaws.com"
                 )
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH")  // 필요한 HTTP 메서드 명시
                 .allowedHeaders("*")  // 모든 헤더 허용

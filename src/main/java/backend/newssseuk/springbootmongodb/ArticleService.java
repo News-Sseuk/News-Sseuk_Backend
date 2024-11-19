@@ -75,13 +75,16 @@ public class ArticleService {
                 div++;
             }
 
-            WebElement timeElement = null;
+            String timeText = null;
             try {
-                timeElement = webDriver.findElement(By.xpath(String.format("//*[@id=\"newsct\"]/div[2]/div/div[1]/div[%d]/ul/li[%d]/div/div/div[2]/div[2]/div[1]/div[2]/b", div, i)));
-            } catch (Exception e) {
-                timeElement = webDriver.findElement(By.xpath(String.format("//*[@id=\"newsct\"]/div[2]/div/div[1]/div[%d]/ul/li[%d]/div/div/div/div[2]/div[1]/div[2]/b", div, i)));
+                timeText = webDriver.findElement(By.xpath(String.format("//*[@id=\"newsct\"]/div[2]/div/div[1]/div[%d]/ul/li[%d]/div/div/div[2]/div[2]/div[1]/div[2]/b", div, i))).getText();
+            } catch (Exception e1) {
+                try {
+                    timeText = webDriver.findElement(By.xpath(String.format("//*[@id=\"newsct\"]/div[2]/div/div[1]/div[%d]/ul/li[%d]/div/div/div/div[2]/div[1]/div[2]/b", div, i))).getText();
+                } catch (Exception e2) {
+                    timeText = "45분전";
+                }
             }
-            String timeText = timeElement.getText();
             int minutesAgo = Integer.parseInt(timeText.replaceAll("[^0-9]", ""));
             if (minutesAgo > 10 || timeText.endsWith("시간전")) {
                 break;
