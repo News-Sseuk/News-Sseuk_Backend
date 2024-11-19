@@ -28,8 +28,8 @@ public class ArticleReportService {
         }
     }
 
-    public void updateArticleReport(Long article_id, String reason){
-        Article article = jpaArticleRepository.findById(article_id).get();
+    public void updateArticleReport(String nosql_article_id, String reason){
+        Article article = jpaArticleRepository.findByNosqlId(nosql_article_id).get();
         ReportingReason reportingReason = reportingReasonConverter.fromReasonReportingReason(reason);
 
         ArticleReport articleReport = ArticleReport.builder()

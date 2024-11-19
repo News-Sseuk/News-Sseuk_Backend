@@ -7,6 +7,6 @@ import backend.newssseuk.domain.user.User;
 import java.util.List;
 
 public interface ScrapRepositoryCustom {
-    List<Article> getUserArticleByCategory(User user, Category category, Long lastArticleId);
+    List<Article> getUserArticleByCategory(User user, Category category, String lastArticleId);
     List<Category> getCategoryByUser(User user);
 }

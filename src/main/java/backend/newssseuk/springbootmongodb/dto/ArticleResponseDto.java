@@ -1,6 +1,7 @@
 package backend.newssseuk.springbootmongodb.dto;
 
 import backend.newssseuk.domain.articleHashTag.ArticleHashTag;
+import backend.newssseuk.springbootmongodb.redis.ArticleHashTagDTO;
 import backend.newssseuk.springbootmongodb.redis.ArticleRedisEntity;
 import com.mongodb.lang.Nullable;
 import lombok.*;
@@ -25,7 +26,7 @@ public class ArticleResponseDto {
 
     private String category;
 
-    private List<ArticleHashTag> hashTagList;
+    private List<ArticleHashTagDTO> hashTagList;
 
     private Integer reliability;
 

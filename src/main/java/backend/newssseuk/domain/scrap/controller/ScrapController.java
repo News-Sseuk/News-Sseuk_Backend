@@ -22,14 +22,14 @@ public class ScrapController {
     private final CategoryConverter categoryConverter;
 
     @PostMapping("scrap/{article_id}")
-    public ApiResponse<String> scrapArticle(@AuthUser User user, @PathVariable("article_id") String article_id){
-        return ApiResponse.onSuccess(scrapService.scrapArticleByArticleId(user, article_id));
+    public ApiResponse<String> scrapArticle(@AuthUser User user, @PathVariable("article_id") String nosql_article_id){
+        return ApiResponse.onSuccess(scrapService.scrapArticleByArticleId(user, nosql_article_id));
     }
 
     @GetMapping("scrap/")
-    public ApiResponse<ScrapResponseDTO> getScrapArticles(@AuthUser User user, @RequestParam(value = "articleId", required = false) Long articleId, @RequestParam("category") String category){
+    public ApiResponse<ScrapResponseDTO> getScrapArticles(@AuthUser User user, @RequestParam(value = "articleId", required = false) String nosql_articleId, @RequestParam("category") String category){
         Category categoryEnum = categoryConverter.fromKrCategory(category);
-        return ApiResponse.onSuccess(scrapService.getScrapArticlesByUser(user, categoryEnum, articleId)); // 마지막으로 조회한 articleId가 필요함.
+        return ApiResponse.onSuccess(scrapService.getScrapArticlesByUser(user, categoryEnum, nosql_articleId)); // 마지막으로 조회한 articleId가 필요함.
     }
 
     @GetMapping("scrap/categories")
