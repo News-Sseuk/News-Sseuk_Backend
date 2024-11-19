@@ -29,7 +29,7 @@ public class SearchService {
 
     public List<ArticleThumbnailDTO> searchByKeyword(String time,String keyword, String onOff, String sort) {
         Pageable pageable = PageRequest.of(0, 20);
-        time = time.replace("%", "T");
+        time = time.replace(" ", "T");
         LocalDateTime cursorTime = LocalDateTime.parse(time, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
         List<Article> articleList = articleRepository.findByContentContainingAndPublishedDateLessThanOrderByPublishedDateDesc(keyword, cursorTime, pageable);
         boolean isJpaRequired = onOff.toLowerCase(Locale.ROOT).equals("on");
