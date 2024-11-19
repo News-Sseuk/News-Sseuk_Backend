@@ -2,6 +2,7 @@ package backend.newssseuk.domain.relatedArticle;
 
 import backend.newssseuk.domain.article.Article;
 import backend.newssseuk.domain.article.repository.JpaArticleRepository;
+import backend.newssseuk.domain.relatedArticle.dto.ArticleIssueThumbnailDTO;
 import backend.newssseuk.springbootmongodb.ArticleService;
 import backend.newssseuk.springbootmongodb.dto.ArticleThumbnailDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -24,8 +25,32 @@ public class RelatedArticleService {
     private final RelatedArticleRepository relatedArticleRepository;
     private final ArticleService articleService;
 
+
+    public List<ArticleIssueThumbnailDTO> getArticleIssueThumbnailDTO(List<ArticleThumbnailDTO> articleThumbnailDTOs, List<Article> articles) {
+        return articleThumbnailDTOs.stream()
+                .map(thumbnailDTO -> {
+                    // articleList에서 하나씩 기사 매칭.
+                    Article correspondingArticle = articles.stream()
+                            .filter(article -> article.getNosqlId().equals(thumbnailDTO.getId())).findFirst().get();
+
+                    // 찾은 기사에 따라 ArticleIssueThumnailDTO 생성
+                    return ArticleIssueThumbnailDTO.builder()
+                            .id(thumbnailDTO.getId())
+                            .category(thumbnailDTO.getCategory())
+                            .title(thumbnailDTO.getTitle())
+                            .description(thumbnailDTO.getDescription())
+                            .publishedDate(thumbnailDTO.getPublishedDate())
+                            .reliability(thumbnailDTO.getReliability())
+                            .hashTagList(thumbnailDTO.getHashTagList())
+                            .issue(correspondingArticle.getIssue())
+                            .build();
+                })
+                .toList();
+    }
+
+
     @Transactional
-    public List<ArticleThumbnailDTO> collectingRelatedArticles(String nosql_article_id) throws Exception {
+    public List<ArticleIssueThumbnailDTO> collectingRelatedArticles(String nosql_article_id) throws Exception {
         Article article = jpaArticleRepository.findByNosqlId(nosql_article_id).orElse(null);
         String fullUrl = "http://52.78.251.30:80/article/each?nosql_id=" + URLEncoder.encode(String.valueOf(nosql_article_id), "UTF-8");
         if (saveRelatedArticleId(fullUrl) == null){
@@ -44,9 +69,11 @@ public class RelatedArticleService {
                     .articleList(mysqlIdList)
                     .build());
         }
-        return articleService.getArticleThumbnailsByJpa(mysqlIdList.stream()
+        List<Article> articles = mysqlIdList.stream()
                 .map(mysqlId -> jpaArticleRepository.findById(mysqlId).orElseThrow())
-                .toList());
+                .toList();
+        List<ArticleThumbnailDTO> articleThumbnailDTOS = articleService.getArticleThumbnailsByJpa(articles);
+        return getArticleIssueThumbnailDTO(articleThumbnailDTOS, articles);
     }
 
     @Transactional
