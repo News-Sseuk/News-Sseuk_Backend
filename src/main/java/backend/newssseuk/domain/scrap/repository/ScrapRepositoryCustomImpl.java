@@ -31,7 +31,7 @@ public class ScrapRepositoryCustomImpl implements ScrapRepositoryCustom{
                 .where(
                         qScrap.user.eq(user)
                                 .and(qScrap.article.category.eq(category))
-                                .and(getLastArticleIdCondition(qScrap, lastArticleId))
+                                .and(lastArticleId != null ? getLastArticleIdCondition(qScrap, lastArticleId) : null)
                 )
                 .orderBy(qScrap.article.id.asc())  // 최신순 정렬
                 .limit(3) // 페이지당 몇개의 데이터를 보여줄껀지
@@ -40,7 +40,7 @@ public class ScrapRepositoryCustomImpl implements ScrapRepositoryCustom{
 
     private BooleanExpression getLastArticleIdCondition(QScrap qScrap, String lastArticleId) {
         Article jpaArticle = jpaArticleService.findByMongoId(lastArticleId);
-        return lastArticleId != null ? qScrap.article.id.gt(jpaArticle.getId()) : null;
+        return qScrap.article.id.gt(jpaArticle.getId());
     }
 
     @Override
