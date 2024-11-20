@@ -27,9 +27,10 @@ public class EachArticleService {
     private final ThreadLocalService threadLocalService;
     private final JpaArticleService jpaArticleService;
 
+    private final Object lock = new Object();
     WebDriver webDriver;
 
-    //@Async("executor")
+    @Async("executor")
     public void getEachArticles(Category category, List<String> urlList) throws Exception {
         webDriver = threadLocalService.getDriver();
 
@@ -89,7 +90,9 @@ public class EachArticleService {
                     .nosqlId(savedArticle.getId())
                     .build();
             backend.newssseuk.domain.article.Article savedJpaArticle = jpaArticleRepository.save(jpaArticle);
-            jpaArticleService.saveArticleDetailByAI("http://52.78.251.30:80/article/detail",savedJpaArticle.getId());
+            synchronized (lock) {
+                jpaArticleService.saveArticleDetailByAI("http://52.78.251.30:80/article/detail",savedJpaArticle.getId());
+            }
             /*retryTemplate.execute(context -> {
                 saveArticleDetailWithRetry(savedJpaArticle.getId());
                 return null;
