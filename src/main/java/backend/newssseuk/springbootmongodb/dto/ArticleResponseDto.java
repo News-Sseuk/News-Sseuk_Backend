@@ -7,6 +7,7 @@ import lombok.*;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Data
@@ -44,9 +45,10 @@ public class ArticleResponseDto {
         this.content = article.getContent();
         this.category = article.getCategory();
         this.hashTagList = article.getHashTagList() == null
-                ? Collections.singletonList(null)
+                ? Collections.emptyList()
                 : article.getHashTagList().stream()
                 .map(ArticleHashTagDTO::getHashTagName)
+                .filter(Objects::nonNull)
                 .distinct()
                 .collect(Collectors.toList());
         this.reliability = article.getReliability();
