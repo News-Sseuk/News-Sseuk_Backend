@@ -39,13 +39,16 @@ public class SearchService {
         Stream<backend.newssseuk.domain.article.Article> articleStream = articleList.stream()
                 .map(article -> {
                     try {
-                        return jpaArticleService.findByMongoId(article.getId());
-                    } catch (GeneralException e) {
-                        // MySQL에서 찾을 수 없는 경우 null 반환
+                        backend.newssseuk.domain.article.Article jpaArticle = jpaArticleService.findByMongoId(article.getId());
+                        if (jpaArticle.getReliability() == null) {
+                            return null;
+                        }
+                        return jpaArticle;
+                    } catch (GeneralException | NullPointerException e) {
                         return null;
                     }
                 })
-                .filter(Objects::nonNull); // null인 항목 제거
+                .filter(Objects::nonNull);
 
         if (isJpaRequired) {
             articleStream = articleStream.filter(article -> article.getReliability() > 60);
