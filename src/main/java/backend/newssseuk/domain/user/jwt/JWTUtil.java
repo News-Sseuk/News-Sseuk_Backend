@@ -1,6 +1,7 @@
 package backend.newssseuk.domain.user.jwt;
 
 import backend.newssseuk.domain.user.web.response.JwtToken;
+import backend.newssseuk.payload.exception.CustomJwtException;
 import backend.newssseuk.payload.exception.GeneralException;
 import backend.newssseuk.payload.status.ErrorStatus;
 import io.jsonwebtoken.*;
@@ -13,7 +14,6 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
-import java.util.Base64;
 import java.util.Date;
 
 @Component
@@ -27,13 +27,19 @@ public class JWTUtil {
     }
 
     public String getUsername(String token) {
-        Claims claims = parseClaims(token);
-        return claims.getSubject();
+        try {
+            return parseClaims(token).getSubject();
+        } catch (CustomJwtException e) {
+            return e.getClaims().getSubject();
+        }
     }
 
     public String getEmail(String token) {
-        Claims claims = parseClaims(token);
-        return claims.get("email", String.class);
+        try {
+            return parseClaims(token).get("email", String.class);
+        } catch (CustomJwtException e) {
+            return e.getClaims().get("email", String.class);
+        }
     }
 
     public Boolean isExpired(String token) {
@@ -53,7 +59,8 @@ public class JWTUtil {
                     .parseClaimsJws(token)
                     .getBody();
         } catch (ExpiredJwtException e) {
-            throw new GeneralException(ErrorStatus.EXPIRED_ACCESS_TOKEN);
+            Claims expiredClaims = e.getClaims();
+            throw new CustomJwtException(ErrorStatus.EXPIRED_ACCESS_TOKEN, expiredClaims);
         } catch (SignatureException e) {
             throw new GeneralException(ErrorStatus.INVALID_TOKEN);
         } catch (Exception e) {
