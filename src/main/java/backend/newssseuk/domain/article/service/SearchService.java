@@ -52,7 +52,7 @@ public class SearchService {
         }
 
         if (!sort.toLowerCase(Locale.ROOT).equals("latest")) {
-            articleStream = articleStream.sorted(Comparator.comparingInt(backend.newssseuk.domain.article.Article::getReliability));
+            articleStream = articleStream.sorted(Comparator.comparingInt(backend.newssseuk.domain.article.Article::getReliability).reversed());
         }
 
         List<backend.newssseuk.domain.article.Article> articles = articleStream.toList();
