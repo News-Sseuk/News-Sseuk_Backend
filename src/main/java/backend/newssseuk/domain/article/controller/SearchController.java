@@ -16,7 +16,6 @@ import java.util.List;
 public class SearchController {
     private final SearchService searchService;
 
-    //검색 기능 구현
     @PostMapping("/{keyword}/{onOff}/{sort}/{cursorTime}")
     @Operation(summary = "검색 api입니다")
     public ApiResponse<List<ArticleThumbnailDTO>> searchByKeyword (@PathVariable("cursorTime") String cursorTime,
