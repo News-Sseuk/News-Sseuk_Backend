@@ -18,7 +18,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -150,26 +149,6 @@ public class ArticleService {
                     .description((articleDto.getContent().length() > 80) ? articleDto.getContent().substring(0, 80) : articleDto.getContent())
                     .publishedDate(jpaArticle.getCrawledTime().format(formatter))
                     .category(jpaArticle.getCategory().getKorean())
-                    .hashTagList(articleHashTagService.getHashTagListByArticleId(jpaArticle.getId()))
-                    .reliability(jpaArticle.getReliability())
-                    .build();
-            articleThumbnailDTOList.add(articleThumbnailDTO);
-        }
-        return articleThumbnailDTOList;
-    }
-
-    public List<ArticleThumbnailDTO> getArticleThumbnailsByMongo(List<backend.newssseuk.springbootmongodb.Article> articleList) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        List<ArticleThumbnailDTO> articleThumbnailDTOList = new ArrayList<>();
-        for(backend.newssseuk.springbootmongodb.Article article : articleList) {
-            Article jpaArticle = jpaArticleService.findByMongoId(article.getId());
-            ArticleResponseDto articleDto = findArticles(null, article.getId());
-            ArticleThumbnailDTO articleThumbnailDTO = ArticleThumbnailDTO.builder()
-                    .id(articleDto.getId())
-                    .title(articleDto.getTitle())
-                    .description((articleDto.getContent().length() > 80) ? articleDto.getContent().substring(0, 80) : articleDto.getContent())
-                    .publishedDate(article.getPublishedDate().format(formatter))
-                    .category(article.getCategory().getKorean())
                     .hashTagList(articleHashTagService.getHashTagListByArticleId(jpaArticle.getId()))
                     .reliability(jpaArticle.getReliability())
                     .build();

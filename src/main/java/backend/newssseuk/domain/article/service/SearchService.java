@@ -1,5 +1,6 @@
 package backend.newssseuk.domain.article.service;
 
+import backend.newssseuk.payload.exception.GeneralException;
 import backend.newssseuk.springbootmongodb.Article;
 import backend.newssseuk.springbootmongodb.ArticleRepository;
 import backend.newssseuk.springbootmongodb.ArticleService;
@@ -16,6 +17,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 @Slf4j
@@ -28,27 +30,33 @@ public class SearchService {
     private final JpaArticleService jpaArticleService;
 
     public List<ArticleThumbnailDTO> searchByKeyword(String time,String keyword, String onOff, String sort) {
-        Pageable pageable = PageRequest.of(0, 20);
+        Pageable pageable = PageRequest.of(0, 40);
         time = time.replace(" ", "T");
         LocalDateTime cursorTime = LocalDateTime.parse(time, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
         List<Article> articleList = articleRepository.findByContentContainingAndPublishedDateLessThanOrderByPublishedDateDesc(keyword, cursorTime, pageable);
         boolean isJpaRequired = onOff.toLowerCase(Locale.ROOT).equals("on");
 
         Stream<backend.newssseuk.domain.article.Article> articleStream = articleList.stream()
-                .map(article -> jpaArticleService.findByMongoId(article.getId()));
+                .map(article -> {
+                    try {
+                        return jpaArticleService.findByMongoId(article.getId());
+                    } catch (GeneralException e) {
+                        // MySQL에서 찾을 수 없는 경우 null 반환
+                        return null;
+                    }
+                })
+                .filter(Objects::nonNull); // null인 항목 제거
 
         if (isJpaRequired) {
             articleStream = articleStream.filter(article -> article.getReliability() > 60);
         }
 
         if (!sort.toLowerCase(Locale.ROOT).equals("latest")) {
-            articleStream = articleStream.sorted(Comparator.comparingInt(backend.newssseuk.domain.article.Article::getReliability));
+            articleStream = articleStream.sorted(Comparator.comparingInt(backend.newssseuk.domain.article.Article::getReliability).reversed());
         }
 
         List<backend.newssseuk.domain.article.Article> articles = articleStream.toList();
 
-        return isJpaRequired
-                ? articleService.getArticleThumbnailsByJpa(articles)
-                : articleService.getArticleThumbnailsByMongo(articleList);
+        return articleService.getArticleThumbnailsByJpa(articles);
     }
 }

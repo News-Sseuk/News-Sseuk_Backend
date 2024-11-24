@@ -53,10 +53,11 @@ public class RelatedArticleService {
     public List<ArticleIssueThumbnailDTO> collectingRelatedArticles(String nosql_article_id) throws Exception {
         Article article = jpaArticleRepository.findByNosqlId(nosql_article_id).orElse(null);
         String fullUrl = "http://52.78.251.30:80/article/each?nosql_id=" + URLEncoder.encode(String.valueOf(nosql_article_id), "UTF-8");
-        if (saveRelatedArticleId(fullUrl) == null){
+        List<String> relatedArticleIds = saveRelatedArticleId(fullUrl);
+        if (relatedArticleIds == null){
             return null;
         }
-        List<Long> mysqlIdList = saveRelatedArticleId(fullUrl)
+        List<Long> mysqlIdList = relatedArticleIds
                 .stream()
                 .map(nosql_id -> jpaArticleRepository.findByNosqlId(nosql_id).get().getId()).toList();
 

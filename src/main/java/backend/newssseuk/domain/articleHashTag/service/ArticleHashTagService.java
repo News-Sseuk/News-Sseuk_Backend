@@ -27,7 +27,7 @@ public class ArticleHashTagService {
     }
 
     public SearchingUIDto getTrending(User user) {
-        LocalDateTime twoHoursAgo = LocalDateTime.now().minusHours(2);
+        LocalDateTime twoHoursAgo = LocalDateTime.now().minusHours(24); //2시간에서 24시간으로 변경
         List<HashTag> hashTagList = articleHashTagRepository.findTop8HashTagsInLast2Hours(twoHoursAgo);
 
         List<String> trending = hashTagList.stream()

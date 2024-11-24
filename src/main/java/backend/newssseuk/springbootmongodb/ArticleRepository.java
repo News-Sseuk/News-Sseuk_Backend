@@ -1,6 +1,5 @@
 package backend.newssseuk.springbootmongodb;
 
-import backend.newssseuk.domain.enums.Category;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.domain.Pageable;
 
@@ -14,8 +13,6 @@ public interface ArticleRepository extends MongoRepository<Article, String> {
 
     @Override
     Optional<Article> findById(String id);
-
-    List<Article> findAllByCategory(Category category);
 
     List<Article> findByContentContainingAndPublishedDateLessThanOrderByPublishedDateDesc(String word, LocalDateTime cursorTime, Pageable pageable);
 }
