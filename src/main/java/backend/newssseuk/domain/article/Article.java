@@ -58,17 +58,4 @@ public class Article {
     public ArticleRedisEntity getMongoEntity(ArticleHelper articleHelper) {
         return articleHelper.getRedisEntityByNosqlId(this.nosqlId);
     }
-    /*@ElementCollection
-    private List<String> keywordList = new ArrayList<>();
-
-    @ElementCollection
-    private List<String> imageList = new ArrayList<>();
-
-    private float reliability;
-
-    private String summary;
-
-    private Category category;
-
-    private Trending trending;*/
 }

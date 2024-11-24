@@ -44,7 +44,7 @@ public class ArticleResponseDto {
         this.content = article.getContent();
         this.category = article.getCategory();
         this.hashTagList = article.getHashTagList() == null
-                ? Collections.singletonList("더미")
+                ? Collections.singletonList("")
                 : article.getHashTagList().stream()
                 .map(ArticleHashTagDTO::getHashTagName)
                 .distinct()
