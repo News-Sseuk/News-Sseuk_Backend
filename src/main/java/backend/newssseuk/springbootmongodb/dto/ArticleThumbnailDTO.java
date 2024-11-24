@@ -15,4 +15,5 @@ public class ArticleThumbnailDTO {
     private String category;
     private List<String> hashTagList;
     private Integer reliability;
+    private boolean hasNext;
 }
