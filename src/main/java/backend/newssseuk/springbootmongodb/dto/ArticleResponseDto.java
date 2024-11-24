@@ -43,7 +43,9 @@ public class ArticleResponseDto {
         this.image = article.getImage();
         this.content = article.getContent();
         this.category = article.getCategory();
-        this.hashTagList = article.getHashTagList().stream()
+        this.hashTagList = article.getHashTagList() == null
+                ? Collections.singletonList(null)
+                : article.getHashTagList().stream()
                 .map(ArticleHashTagDTO::getHashTagName)
                 .distinct()
                 .collect(Collectors.toList());
