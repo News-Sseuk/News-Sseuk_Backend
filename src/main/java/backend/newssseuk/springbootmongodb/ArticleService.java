@@ -140,6 +140,7 @@ public class ArticleService {
 
     public List<ArticleThumbnailDTO> getArticleThumbnailsByJpa(List<Article> jpaArticleList) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        boolean hasNext = jpaArticleList.size() == 20;
         List<ArticleThumbnailDTO> articleThumbnailDTOList = new ArrayList<>();
         for(Article jpaArticle : jpaArticleList) {
             ArticleResponseDto articleDto = findArticles(null, jpaArticle.getNosqlId());
@@ -151,6 +152,7 @@ public class ArticleService {
                     .category(jpaArticle.getCategory().getKorean())
                     .hashTagList(articleHashTagService.getHashTagListByArticleId(jpaArticle.getId()))
                     .reliability(jpaArticle.getReliability())
+                    .hasNext(hasNext)
                     .build();
             articleThumbnailDTOList.add(articleThumbnailDTO);
         }
