@@ -23,16 +23,16 @@ public class JWTFilter extends OncePerRequestFilter {
         try {
             filterChain.doFilter(request, response);
         } catch (ExpiredJwtException e) {
-            setErrorResponse(HttpStatus.UNAUTHORIZED, response, e, ErrorStatus.EXPIRED_ACCESS_TOKEN);
+            setErrorResponse(HttpStatus.UNAUTHORIZED, response, ErrorStatus.EXPIRED_ACCESS_TOKEN);
         } catch (UnsupportedJwtException e) {
-            setErrorResponse(HttpStatus.UNAUTHORIZED, response, e, ErrorStatus.UNSUPPORTED_TOKEN);
+            setErrorResponse(HttpStatus.UNAUTHORIZED, response, ErrorStatus.UNSUPPORTED_TOKEN);
         } catch (Exception e) {
-            setErrorResponse(HttpStatus.UNAUTHORIZED, response, e, ErrorStatus.INVALID_TOKEN);
+            setErrorResponse(HttpStatus.UNAUTHORIZED, response, ErrorStatus.INVALID_TOKEN);
             e.printStackTrace();
         }
     }
 
-    public void setErrorResponse(HttpStatus status, HttpServletResponse response, Throwable ex, ErrorStatus errorStatus) throws IOException {
+    public void setErrorResponse(HttpStatus status, HttpServletResponse response, ErrorStatus errorStatus) throws IOException {
         response.setStatus(status.value());
         response.setContentType("application/json; charset=UTF-8");
 

@@ -1,6 +1,8 @@
 package backend.newssseuk.domain.user.jwt;
 
 import backend.newssseuk.domain.user.web.response.JwtToken;
+import backend.newssseuk.payload.exception.GeneralException;
+import backend.newssseuk.payload.status.ErrorStatus;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
@@ -46,16 +48,16 @@ public class JWTUtil {
 
     private Claims parseClaims(String token) {
         try {
-            Claims claims = Jwts.parser()
+            return Jwts.parser()
                     .setSigningKey(key)
                     .parseClaimsJws(token)
                     .getBody();
-            System.out.println("Claims: " + claims);
-            return claims;
+        } catch (ExpiredJwtException e) {
+            throw new GeneralException(ErrorStatus.EXPIRED_ACCESS_TOKEN);
         } catch (SignatureException e) {
-            System.out.println("Invalid JWT signature: " + token);
-            System.out.println("Key : " + Base64.getEncoder().encodeToString(key.getEncoded()));
-            return null;
+            throw new GeneralException(ErrorStatus.INVALID_TOKEN);
+        } catch (Exception e) {
+            throw new GeneralException(ErrorStatus.INVALID_TOKEN);
         }
     }
 
