@@ -85,7 +85,7 @@ public class ArticleService {
                 }
             }
             int minutesAgo = Integer.parseInt(timeText.replaceAll("[^0-9]", ""));
-            if (minutesAgo > 10 || timeText.endsWith("시간전")) {
+            if (minutesAgo > 20 || timeText.endsWith("시간전")) {
                 break;
             } else {
                 try {
@@ -116,16 +116,18 @@ public class ArticleService {
         eachArticleService.getArticle(urlList);
     }
 
-    public ArticleResponseDto findArticles(User user, String id) {
-        // redis에 있는 지 찾아보고
-        // 등록 안되어있으면, mongodb에서 findById 해서 등록 (cashingArticles 함수 실행)
-        userHistoryService.addUserHistory(user, id);
+    public ArticleResponseDto getArticle(String id) {
         Optional<ArticleRedisEntity> articleRedisEntity = articleRedisRepository.findById(id);
         if (articleRedisEntity.isPresent()) {
             return new ArticleResponseDto(articleRedisEntity.get());
         } else {
             ArticleRedisEntity cashed_article = articleRedisCachingService.cashingArticles(id);
             return new ArticleResponseDto(cashed_article);}
+    }
+
+    public ArticleResponseDto findArticles(User user, String id) {
+        userHistoryService.addUserHistory(user, id);
+        return getArticle(id);
     }
 
     public List<ArticleThumbnailDTO> findArticleThumbnails(User user, String categoryString, LocalDateTime cursorTime) {
@@ -143,7 +145,7 @@ public class ArticleService {
         boolean hasNext = jpaArticleList.size() == 20;
         List<ArticleThumbnailDTO> articleThumbnailDTOList = new ArrayList<>();
         for(Article jpaArticle : jpaArticleList) {
-            ArticleResponseDto articleDto = findArticles(null, jpaArticle.getNosqlId());
+            ArticleResponseDto articleDto = getArticle(jpaArticle.getNosqlId());
             ArticleThumbnailDTO articleThumbnailDTO = ArticleThumbnailDTO.builder()
                     .id(articleDto.getId())
                     .title(articleDto.getTitle())
