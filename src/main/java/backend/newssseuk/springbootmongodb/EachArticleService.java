@@ -141,6 +141,7 @@ public class EachArticleService {
                     .nosqlId(savedArticle.getId())
                     .build();
             backend.newssseuk.domain.article.Article savedJpaArticle = jpaArticleRepository.save(jpaArticle);
+            // AI 서버 API 호출
             jpaArticleService.saveArticleDetailByAI("http://52.78.251.30:80/article/detail",savedJpaArticle.getId());
 /*
             retryTemplate.execute(context -> {
