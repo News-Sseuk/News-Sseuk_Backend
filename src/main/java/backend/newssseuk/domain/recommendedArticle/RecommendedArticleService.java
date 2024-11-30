@@ -74,7 +74,7 @@ public class RecommendedArticleService {
                 .distinct()
                 .collect(Collectors.toList());
 
-        String fullUrl = "http://52.78.251.30:80/article/personalizing";
+        String fullUrl = "AI 서버 API 엔드포인트";
         List<Long> mysqlIdList = saveRecommendArticleId(fullUrl, keywords_list)
                 .stream()
                 .map(nosql_id -> jpaArticleRepository.findByNosqlId(nosql_id).get().getId()).toList();

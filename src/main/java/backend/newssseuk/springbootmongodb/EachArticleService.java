@@ -91,7 +91,7 @@ public class EachArticleService {
                     .build();
             backend.newssseuk.domain.article.Article savedJpaArticle = jpaArticleRepository.save(jpaArticle);
             synchronized (lock) {
-                jpaArticleService.saveArticleDetailByAI("http://52.78.251.30:80/article/detail",savedJpaArticle.getId());
+                jpaArticleService.saveArticleDetailByAI("AI 서버 API 엔드포인트",savedJpaArticle.getId());
             }
             /*retryTemplate.execute(context -> {
                 saveArticleDetailWithRetry(savedJpaArticle.getId());
@@ -142,7 +142,7 @@ public class EachArticleService {
                     .build();
             backend.newssseuk.domain.article.Article savedJpaArticle = jpaArticleRepository.save(jpaArticle);
             // AI 서버 API 호출
-            jpaArticleService.saveArticleDetailByAI("http://52.78.251.30:80/article/detail",savedJpaArticle.getId());
+            jpaArticleService.saveArticleDetailByAI("AI 서버 API 엔드포인트",savedJpaArticle.getId());
 /*
             retryTemplate.execute(context -> {
                 saveArticleDetailWithRetry(savedJpaArticle.getId());
@@ -155,6 +155,6 @@ public class EachArticleService {
 
 /*    @Retryable(value = {HttpServerErrorException.class}, maxAttempts = 3, backoff = @Backoff(delay = 1000))
     private void saveArticleDetailWithRetry(Long articleId) throws Exception {
-        jpaArticleService.saveArticleDetailByAI("http://52.78.251.30:80/article/detail", articleId);
+        jpaArticleService.saveArticleDetailByAI(""AI 서버 API 엔드포인트"", articleId);
     }*/
 }

@@ -52,7 +52,7 @@ public class RelatedArticleService {
     @Transactional
     public List<ArticleIssueThumbnailDTO> collectingRelatedArticles(String nosql_article_id) throws Exception {
         Article article = jpaArticleRepository.findByNosqlId(nosql_article_id).orElse(null);
-        String fullUrl = "http://52.78.251.30:80/article/each?nosql_id=" + URLEncoder.encode(String.valueOf(nosql_article_id), "UTF-8");
+        String fullUrl = "AI 서버 API 엔드포인트?nosql_id=" + URLEncoder.encode(String.valueOf(nosql_article_id), "UTF-8");
         List<String> relatedArticleIds = saveRelatedArticleId(fullUrl);
         if (relatedArticleIds == null){
             return null;
